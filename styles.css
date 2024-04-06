@@ -1,0 +1,11 @@
+/* styles.css */
+
+/* Body font */
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+
+/* Heading font */
+h1, h2, h3, h4, h5, h6 {
+    font-family: "Myriad Pro", Arial, sans-serif;
+}
