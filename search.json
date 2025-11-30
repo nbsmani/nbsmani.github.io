@@ -1,0 +1,79 @@
+[
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data Engineering & Distributed Systems",
+    "section": "",
+    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects."
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "Data Engineering & Distributed Systems",
+    "section": "",
+    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects."
+  },
+  {
+    "objectID": "index.html#latest-posts",
+    "href": "index.html#latest-posts",
+    "title": "Data Engineering & Distributed Systems",
+    "section": "Latest Posts",
+    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nBlog\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata-engineering\n\n\n\n\n\n\n\n\n\nNov 8, 2024\n\n\n\n\n\nNo matching items"
+  },
+  {
+    "objectID": "posts/2025-11-09-docker-data-pipeline.html",
+    "href": "posts/2025-11-09-docker-data-pipeline.html",
+    "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
+    "section": "",
+    "text": "If your data pipeline has more than one component (e.g python and a database), it is already a distributed system. Treating it anything less is why pipelines break when moved from a local machine to production. To build a system that works everywhere, one must consider service discovery, configuration management and network isolation right from the beginning.\nLet us a build production ready and automated data ingestion pipeline using docker. We will first build a simple python app that takes a csv and stores in a PostgreSQL database, then evolves into a multi-container architecture where a data-importer service automatically ingests data into a dedicated DBMS.\nFor this data pipeline, lets get Paris AirBnB Listings data and build that data importer app. This app will take this csv data and store it into a database inside the PostgreSQL container. To make this app usable for any data, we will parametrize all the input variables.\nThis app takes a CSV file and creates a URL object with parameterized connection details. In isolated environments, Docker’s DNS system resolves service names to container IPs automatically. Everything is parameterized for reuse."
+  },
+  {
+    "objectID": "posts/2025-11-09-docker-data-pipeline.html#containerizing-the-application",
+    "href": "posts/2025-11-09-docker-data-pipeline.html#containerizing-the-application",
+    "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
+    "section": "Containerizing the Application",
+    "text": "Containerizing the Application\nWe can containerize this app simply using a Dockerfile. Assuming this script is stored under ./src/data_importer.py and the downloaded data is placed in data/01_paris_airbnb_listings.csv. We will need pandas, sqlalchemy and psycopg2 as dependencies.\nLet’s create a requirements.txt in the current working directory that will be used to build the docker image.\npandas==2.3.1\nnumpy==2.0.2\nSQLAlchemy==2.0.43\npsycopg2-binary==2.9.11\nWe will use python 3.9-slim as a base image and install the dependencies copy the data and script. We will run the app inside the container and the arguments variables can be passed using the CMD operator.\nFROM python:3.9-slim\nWORKDIR /data_importer\nCOPY requirements.txt .\nRUN pip install --no-cache-dir -r requirements.txt\nCOPY ./data ./src ./\nENTRYPOINT [\"python\",\"data_importer.py\"]\nCMD [\"01_paris_airbnb_listings.csv\",\"sqluser\",\"secret\",\"dbms\",\"5432\", \"global_data\",\"paris_airbnb\" ]\nThe image can be built using.\ndocker build -t data_importer .\nThe above command will yield an image named data_importer."
+  },
+  {
+    "objectID": "posts/2025-11-09-docker-data-pipeline.html#orchestrating-with-docker-compose",
+    "href": "posts/2025-11-09-docker-data-pipeline.html#orchestrating-with-docker-compose",
+    "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
+    "section": "Orchestrating with Docker Compose",
+    "text": "Orchestrating with Docker Compose\nOnce the image is successfully built, we can create a distributed system using docker-compose. We will use PostgreSQL 14 image for database and create a database service dbms. We will use a named volume pgdata for data persistence and use a mounted volume to enable communication between the data_importer container. The mounted volume will be mapped between the working directory of the data_importer app and the physical location in the local machine. This way, the system can take any data inside the local data directory and import to the SQL database automatically and securely. We will use a bridge network named telnet to enable container-to -container communication. lets save these parameters in a docker-compose.yml in the current working directory.\nservices :\n  dbms :\n    image : postgres:14\n    environment:\n      POSTGRES_DB: global_data\n      POSTGRES_USER: sqluser\n      POSTGRES_PASSWORD: secret\n    volumes :\n      - pgdata:/var/lib/postgresql/data\n      - ./data:/imported_data\n    ports :\n      - \"5432:5432\"\n    networks :\n      - telnet\n  \n  dataimporter:\n    image: data_importer\n    depends_on:\n      - dbms\n    networks:\n      - telnet\n    command: [\"01_paris_airbnb_listings.csv\",\"sqluser\",\"secret\",\"dbms\",\"5432\",\"global_data\",\"paris_airbnb_data\"]\n  \nvolumes :\n  pgdata :\n\nnetworks :\n  telnet :\n    driver : bridge"
+  },
+  {
+    "objectID": "posts/2025-11-09-docker-data-pipeline.html#deployment",
+    "href": "posts/2025-11-09-docker-data-pipeline.html#deployment",
+    "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
+    "section": "Deployment",
+    "text": "Deployment\nThe complete ETL pipeline can be deployed using:\ndocker-compose up -d\nUpon successful execution, the data would be safely stored inside the global_data database in the dbms server. This can be verified using a docker exec command.\ndocker exec -it sql_dbms_1 psql -U sqluser -d global_data  \nWhich yields\n\npsql (14.19 (Debian 14.19-1.pgdg13+1))  \nType \"help\" for help.  \n  \nglobal_data=# \\dt  \n             List of relations  \nSchema |       Name        | Type  |  Owner     \n--------+-------------------+-------+---------  \npublic | paris_airbnb_data | table | sqluser  \n(1 row)  \n  \nglobal_data=#\nNote that the table_name is correctly named as paris_airbnb_data contary to paris_airbnb as mentioned in the Dockerfile. This suggests that the data is correctly passed from the argument variables defined in the command operator in the docker-compose.yml."
+  },
+  {
+    "objectID": "posts/2025-11-09-docker-data-pipeline.html#summary",
+    "href": "posts/2025-11-09-docker-data-pipeline.html#summary",
+    "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
+    "section": "Summary",
+    "text": "Summary\nIn this guide, we transformed a simple Python app into a production-ready data pipeline by adopting distributed systems principles. - Service Discovery: Containers communicate through Docker DNS (dbms) instead of hardcoded IPs. - Configuration Management: All parameters are externalized through CLI arguments and environment variables. - Network Isolation: Secure bridge network enables container-to-container communication. - Data Persistence: Named volumes ensure database survival across container restarts. - Orchestration: Docker Compose manages multi-service dependencies and lifecycle.\nTreating data pipelines as a distributed systems from the beginning eliminates the system breakdown across environments and creates infrastructure that scales from local development to production deployment.\nThe complete pipeline is available in GitHub."
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Here you can browse my latest posts."
+  },
+  {
+    "objectID": "posts/index.html#latest-posts",
+    "href": "posts/index.html#latest-posts",
+    "title": "Blog",
+    "section": "",
+    "text": "Here you can browse my latest posts."
+  },
+  {
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
+    "section": "",
+    "text": "! Site is under construction\n I am a Data Engineer with experience in:\n\nBig Data Technologies: Spark, Kafka\nCloud Platforms: AWS, GCP, Azure\nContainerization: Docker, Kubernetes\nLanguages: Python, Scala, SQL,R\n\nI enjoy solving complex data problems and optimizing performance for large-scale applications."
+  }
+]
