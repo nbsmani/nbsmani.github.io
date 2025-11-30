@@ -1,0 +1,25 @@
+---
+title: "About Me"
+image: assets/profile.jpg
+about:
+  template: jolla
+  links:
+    - icon: linkedin
+      text: LinkedIn
+      href: https://linkedin.com/in/nbsmani
+    - icon: github
+      text: Github
+      href: https://github.com/nbsmani
+
+---
+! Site is under construction
+
+<br>
+I am a Data Engineer with experience in:
+
+- **Big Data Technologies**: Spark, Kafka
+- **Cloud Platforms**: AWS, GCP, Azure
+- **Containerization**: Docker, Kubernetes
+- **Languages**: Python, Scala, SQL,R
+
+I enjoy solving complex data problems and optimizing performance for large-scale applications.

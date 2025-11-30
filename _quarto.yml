@@ -1,0 +1,32 @@
+project:
+  type: website
+
+website:
+  title: "Balasubramaniam Namasivayam"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: projects.qmd
+        text: Projects
+      - href: posts/index.qmd
+        text: Blog
+      - href: about.qmd
+        text: About
+    right:
+      - icon: github
+        href: https://github.com/nbsmani
+      - icon: linkedin
+        href: https://linkedin.com/in/nbsmani
+
+  page-footer:
+    left: "Copyright 2025, nbsmani"
+    right: 
+      - icon: github
+        href: https://github.com/nbsmani
+
+format:
+  html:
+    theme: cyborg
+    toc: true
+    css: ./assets/styles.css

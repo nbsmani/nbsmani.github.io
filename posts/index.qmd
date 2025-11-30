@@ -1,0 +1,7 @@
+---
+title: Blog
+---
+
+## Latest Posts
+
+Here you can browse my latest posts.
