@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "A Data Pipeline is a distributed system. Start Architecting It Like One"
-date: 2024-11-08
+date: 2025-11-08
 categories: [docker, data-engineering]
 execute:
   eval: false

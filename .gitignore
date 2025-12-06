@@ -1,1 +1,7 @@
+# Quarto
+.quarto/
+*-cache/
+*-files/
 _site
+/.quarto/
+**/*.quarto_ipynb
