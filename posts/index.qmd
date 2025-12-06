@@ -1,7 +1,22 @@
 ---
-title: Blog
+title: "Blog"
+listing:
+  contents: .
+  sort: "date desc"
+  type: default
+  categories: true
+  sort-ui: false
+  filter-ui: false
+  page-size: 10 
 ---
+
+## All Posts
+
+Complete archive of my writings on technology, data, and distributed systems.
 
 ## Latest Posts
 
-Here you can browse my latest posts.
+:::{#listing}
+:::
+
+[← Back to Home](/)

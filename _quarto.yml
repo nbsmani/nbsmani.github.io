@@ -20,13 +20,15 @@ website:
         href: https://linkedin.com/in/nbsmani
 
   page-footer:
-    left: "Copyright 2025, nbsmani"
-    right: 
+    left: "Copyright 2025, Balasubramaniam Namasivayam"
+    right:
+      - icon: markdown
+        href: https://quarto.org 
       - icon: github
         href: https://github.com/nbsmani
 
 format:
   html:
-    theme: cyborg
+    theme: slate
     toc: true
     css: ./assets/styles.css

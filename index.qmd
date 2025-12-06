@@ -1,12 +1,5 @@
 ---
 title: "Data Engineering & Distributed Systems"
-listing:
-  contents: posts
-  sort: "date desc"
-  type: default
-  categories: true
-  sort-ui: false
-  filter-ui: false
 page-layout: full
 title-block-banner: false
 ---
@@ -17,7 +10,6 @@ I am a Data Engineer passionate about building scalable data pipelines and distr
 
 This site serves as my personal portfolio and blog where I share my learnings and projects.
 
-## Latest Posts
 
-:::{#listing}
-:::
+
+**[View all posts →](posts/index.qmd)**
