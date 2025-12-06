@@ -1,8 +1,8 @@
 [
   {
-    "listing": "/index.html",
+    "listing": "/posts/index.html",
     "items": [
-      "/posts/index.html",
+      "/posts/2025-11-27-jacquard.html",
       "/posts/2025-11-09-docker-data-pipeline.html"
     ]
   }
