@@ -2,6 +2,7 @@
 title: "Data Engineering & Distributed Systems"
 page-layout: full
 title-block-banner: false
+toc: false
 ---
 
 ## Welcome
@@ -10,6 +11,16 @@ I am a Data Engineer passionate about building scalable data pipelines and distr
 
 This site serves as my personal portfolio and blog where I share my learnings and projects.
 
+<div class="clean-cards">
+<div class="clean-card">
+<h3>View all projects</h3>
+<p>Explore my projects</p>
+<a href="projects/index.qmd">Explore →</a>
+</div>
 
-
-**[View all posts →](posts/index.qmd)**
+<div class="clean-card">
+<h3>View all posts</h3>
+<p>Browse my latest articles</p>
+<a href="posts/index.qmd">Explore →</a>
+</div>
+</div>
