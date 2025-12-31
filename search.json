@@ -1,45 +1,10 @@
 [
   {
-    "objectID": "posts/2025-11-27-jacquard.html",
-    "href": "posts/2025-11-27-jacquard.html",
-    "title": "Weaving Code: When the Loom Met the Algorithm",
+    "objectID": "about.html",
+    "href": "about.html",
+    "title": "About Me",
     "section": "",
-    "text": "Do you know that the most famous image in the early history of computing is actually a piece of fabric? It is a portrait of a French engineer who lived during the Napoleonic Era, woven entirely on silk.\n\n\n\nThe Most Famous Image in the Early History of Computing. This is actually a portrait of a silk fabric on which the image of Jacquard was woven. Portrait by Michel Marie Carquillat after Claude Bonnefond (circa 1839). Public domain via Wikimedia Commons.\n\n\nJoseph Marie Jacquard was born in Lyon, France and was a weaver and master inventor. He was celebrated by the Emperor Napoleon for the invention of a “programmable loom”. Jacquard’s idea of using punched cards to represent where a thread must go up or down in fine silk fabric to produce motifs and patterns with unlimited resolution immediately became a royal sensation.\nCharles Babbage had not only personally possessed one of these portraits of Jacquard woven in silk using 24,000 punched cards, but was also deeply inspired by it. He adopted these very punched cards as the input device for his Analytical Engine.\nAfter all, transcribing a complex design onto fabric by controlling threads with punched cards is a physical demonstration of binary logic, waiting to be spotted by a visionary like Babbage. Later, IBM produced computers that used punched cards and card readers. Early computer programs were written on paper, translated into punched cards, then loaded into a computer to be read and executed.\nWait - why am I boring you with the history of computers?\nA couple of days ago, I saw a post in my feed where someone uploaded a photo to an LLM and asked it to return a pattern so his wife could knit the photo into socks or a handbag.\nIt was in that moment I saw the circle close. The punched cards of the 1800s have now evolved into artificial neural networks, only to give back a pattern showing where a thread must go up or down in a fabric.\n\n\n\nAI-generated representation of Joseph Marie Jacquard with a punched card\n\n\nI started my career as a textile engineer, and I still vividly remember creating punches in cardboard for the Jacquard loom using a piano card-punching machine during practical sessions. Fast forward to this day of writing, I am now living in Lyon and working at the intersection of informatics and complex data, still looking for patterns not on fabric but on data.\nI just had a moment of awe witnessing the threads of technology woven into a perfect circle across the fabric of space and time. This convergence felt deeply personal. It is a powerful reminder that technology often spirals upward instead of progressing linearly."
-  },
-  {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Complete archive of my writings on technology, data, and distributed systems."
-  },
-  {
-    "objectID": "posts/index.html#all-posts",
-    "href": "posts/index.html#all-posts",
-    "title": "Blog",
-    "section": "",
-    "text": "Complete archive of my writings on technology, data, and distributed systems."
-  },
-  {
-    "objectID": "posts/index.html#latest-posts",
-    "href": "posts/index.html#latest-posts",
-    "title": "Blog",
-    "section": "Latest Posts",
-    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nWeaving Code: When the Loom Met the Algorithm\n\n\n\nHistory of Computing\n\nPersonal Reflection\n\n\n\nA reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.\n\n\n\n\n\nNov 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata-engineering\n\n\n\n\n\n\n\n\n\nNov 8, 2025\n\n\n\n\n\nNo matching items\n\n← Back to Home"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Data Engineering & Distributed Systems",
-    "section": "",
-    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\nView all posts →"
-  },
-  {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
-    "title": "Data Engineering & Distributed Systems",
-    "section": "",
-    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\nView all posts →"
+    "text": "! Site is under construction\n I am a Data Engineer with experience in:\n\nBig Data Technologies: Spark, Kafka\nCloud Platforms: AWS, GCP, Azure\nContainerization: Docker, Kubernetes\nLanguages: Python, Scala, SQL,R\n\nI enjoy solving complex data problems and optimizing performance for large-scale applications."
   },
   {
     "objectID": "posts/2025-11-09-docker-data-pipeline.html",
@@ -77,10 +42,45 @@
     "text": "Summary\nIn this guide, we transformed a simple Python app into a production-ready data pipeline by adopting distributed systems principles. - Service Discovery: Containers communicate through Docker DNS (dbms) instead of hardcoded IPs. - Configuration Management: All parameters are externalized through CLI arguments and environment variables. - Network Isolation: Secure bridge network enables container-to-container communication. - Data Persistence: Named volumes ensure database survival across container restarts. - Orchestration: Docker Compose manages multi-service dependencies and lifecycle.\nTreating data pipelines as a distributed systems from the beginning eliminates the system breakdown across environments and creates infrastructure that scales from local development to production deployment.\nThe complete pipeline is available in GitHub."
   },
   {
-    "objectID": "about.html",
-    "href": "about.html",
-    "title": "About Me",
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Data Engineering & Distributed Systems",
     "section": "",
-    "text": "! Site is under construction\n I am a Data Engineer with experience in:\n\nBig Data Technologies: Spark, Kafka\nCloud Platforms: AWS, GCP, Azure\nContainerization: Docker, Kubernetes\nLanguages: Python, Scala, SQL,R\n\nI enjoy solving complex data problems and optimizing performance for large-scale applications."
+    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
+  },
+  {
+    "objectID": "index.html#welcome",
+    "href": "index.html#welcome",
+    "title": "Data Engineering & Distributed Systems",
+    "section": "",
+    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Complete archive of my writings on technology, data, and distributed systems."
+  },
+  {
+    "objectID": "posts/index.html#all-posts",
+    "href": "posts/index.html#all-posts",
+    "title": "Blog",
+    "section": "",
+    "text": "Complete archive of my writings on technology, data, and distributed systems."
+  },
+  {
+    "objectID": "posts/index.html#latest-posts",
+    "href": "posts/index.html#latest-posts",
+    "title": "Blog",
+    "section": "Latest Posts",
+    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nWeaving Code: When the Loom Met the Algorithm\n\n\n\nHistory of Computing\n\nPersonal Reflection\n\n\n\nA reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.\n\n\n\n\n\nNov 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata-engineering\n\n\n\n\n\n\n\n\n\nNov 8, 2025\n\n\n\n\n\nNo matching items\n\n← Back to Home"
+  },
+  {
+    "objectID": "posts/2025-11-27-jacquard.html",
+    "href": "posts/2025-11-27-jacquard.html",
+    "title": "Weaving Code: When the Loom Met the Algorithm",
+    "section": "",
+    "text": "Do you know that the most famous image in the early history of computing is actually a piece of fabric? It is a portrait of a French engineer who lived during the Napoleonic Era, woven entirely on silk.\n\n\n\nThe Most Famous Image in the Early History of Computing. This is actually a portrait of a silk fabric on which the image of Jacquard was woven. Portrait by Michel Marie Carquillat after Claude Bonnefond (circa 1839). Public domain via Wikimedia Commons.\n\n\nJoseph Marie Jacquard was born in Lyon, France and was a weaver and master inventor. He was celebrated by the Emperor Napoleon for the invention of a “programmable loom”. Jacquard’s idea of using punched cards to represent where a thread must go up or down in fine silk fabric to produce motifs and patterns with unlimited resolution immediately became a royal sensation.\nCharles Babbage had not only personally possessed one of these portraits of Jacquard woven in silk using 24,000 punched cards, but was also deeply inspired by it. He adopted these very punched cards as the input device for his Analytical Engine.\nAfter all, transcribing a complex design onto fabric by controlling threads with punched cards is a physical demonstration of binary logic, waiting to be spotted by a visionary like Babbage. Later, IBM produced computers that used punched cards and card readers. Early computer programs were written on paper, translated into punched cards, then loaded into a computer to be read and executed.\nWait - why am I boring you with the history of computers?\nA couple of days ago, I saw a post in my feed where someone uploaded a photo to an LLM and asked it to return a pattern so his wife could knit the photo into socks or a handbag.\nIt was in that moment I saw the circle close. The punched cards of the 1800s have now evolved into artificial neural networks, only to give back a pattern showing where a thread must go up or down in a fabric.\n\n\n\nAI-generated representation of Joseph Marie Jacquard with a punched card\n\n\nI started my career as a textile engineer, and I still vividly remember creating punches in cardboard for the Jacquard loom using a piano card-punching machine during practical sessions. Fast forward to this day of writing, I am now living in Lyon and working at the intersection of informatics and complex data, still looking for patterns not on fabric but on data.\nI just had a moment of awe witnessing the threads of technology woven into a perfect circle across the fabric of space and time. This convergence felt deeply personal. It is a powerful reminder that technology often spirals upward instead of progressing linearly."
   }
 ]
