@@ -4,7 +4,7 @@
     "href": "about.html",
     "title": "About Me",
     "section": "",
-    "text": "! Site is under construction\n I am a Data Engineer with experience in:\n\nBig Data Technologies: Spark, Kafka\nCloud Platforms: AWS, GCP, Azure\nContainerization: Docker, Kubernetes\nLanguages: Python, Scala, SQL,R\n\nI enjoy solving complex data problems and optimizing performance for large-scale applications."
+    "text": "As a highly motivated Data Engineer, I am dedicated to driving value and innovation within the organizations I collaborate with. Senior Data Engineer with a PhD in Engineering Sciences and 8+ years of experience designing and deploying scalable, containerized data pipelines into production. Expert in Python, SQL, PySpark, and modern orchestration (Airflow) and infrastructure (Docker, AWS) tools. Proven ability to architect full data lifecycle solutions from distributed processing on HPC/Spark clusters to workflow automation and cloud storage ensuring data integrity, reproducibility, and performance. Seeking to apply deep systems- engineering expertise to data infrastructure challenges in the tech industry. I am committed to delivering high-performance outcomes while pursuing personal and professional growth in a dynamic, results-driven environment.\n\nBig Data Technologies: Spark, Kafka\nCloud Platforms: AWS, GCP, Azure\nContainerization: Docker, Kubernetes\nLanguages: Python, Scala, SQL,R\n\nI enjoy solving complex data problems and optimizing performance for large-scale applications."
   },
   {
     "objectID": "posts/2026-01-05-spark.html",
