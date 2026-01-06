@@ -2,7 +2,9 @@
 title: "About Me"
 image: assets/img/profile.jpg
 about:
-  template: jolla
+  template: trestles
+  image-width: 10em
+  image-shape: round
   links:
     - icon: linkedin
       text: LinkedIn
@@ -12,10 +14,9 @@ about:
       href: https://github.com/nbsmani
 
 ---
-! Site is under construction
-
-<br>
-I am a Data Engineer with experience in:
+As a highly motivated Data Engineer, I am dedicated to driving value and innovation within the organizations I collaborate with. Senior Data Engineer with a PhD in Engineering Sciences and 8+ years of experience designing and deploying scalable, containerized data pipelines into production. Expert in Python, SQL, PySpark, and modern orchestration (Airflow) and infrastructure
+(Docker, AWS) tools. Proven ability to architect full data lifecycle solutions from distributed processing on HPC/Spark clusters to workflow automation and cloud storage ensuring data integrity, reproducibility, and performance. Seeking to apply deep systems-
+engineering expertise to data infrastructure challenges in the tech industry. I am committed to delivering high-performance outcomes while pursuing personal and professional growth in a dynamic, results-driven environment.
 
 - **Big Data Technologies**: Spark, Kafka
 - **Cloud Platforms**: AWS, GCP, Azure
