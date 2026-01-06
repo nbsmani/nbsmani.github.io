@@ -1,0 +1,19 @@
+---
+layout: post
+title: "Spark and Big data Engineering"
+date: 2025-12-23
+categories: [distributed-computing, data-engineering, apache-spark]
+execute:
+  eval: false
+---
+
+## Big Data Processing
+
+Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.
+
+Broadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called "partitions") that can be processed efficiently on ordinary machines with moderate resources.
+
+![Big Data Engineering is Distributed Computing](../assets/img/02-bigdata-01.jpg)
+
+Building high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains.
+

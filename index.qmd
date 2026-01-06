@@ -1,13 +1,13 @@
 ---
-title: "Data Engineering & Distributed Systems"
+title: "Welcome to My Personal Website"
 page-layout: full
 title-block-banner: false
 toc: false
 ---
 
-## Welcome
+## 
 
-I am a Data Engineer passionate about building scalable data pipelines and distributed systems. 
+I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems. 
 
 This site serves as my personal portfolio and blog where I share my learnings and projects.
 
