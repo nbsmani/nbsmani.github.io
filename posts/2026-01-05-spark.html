@@ -6,8 +6,9 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-01-05">
 
-<title>Blog – Balasubramaniam Namasivayam</title>
+<title>Essentials of Apache Spark – Balasubramaniam Namasivayam</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +31,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -70,65 +69,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -159,7 +100,7 @@ window.Quarto = {
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../posts/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -194,24 +135,42 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#all-posts" id="toc-all-posts" class="nav-link active" data-scroll-target="#all-posts">All Posts</a></li>
-  <li><a href="#latest-posts" id="toc-latest-posts" class="nav-link" data-scroll-target="#latest-posts">Latest Posts</a></li>
+  <li><a href="#apache-spark" id="toc-apache-spark" class="nav-link active" data-scroll-target="#apache-spark">Apache Spark</a>
+  <ul class="collapse">
+  <li><a href="#in-memory-computing" id="toc-in-memory-computing" class="nav-link" data-scroll-target="#in-memory-computing">In-memory computing:</a></li>
+  <li><a href="#abstractions-in-spark" id="toc-abstractions-in-spark" class="nav-link" data-scroll-target="#abstractions-in-spark">Abstractions in Spark</a></li>
+  <li><a href="#data-partitioning" id="toc-data-partitioning" class="nav-link" data-scroll-target="#data-partitioning">Data Partitioning:</a></li>
+  <li><a href="#fault-tolerant-computing" id="toc-fault-tolerant-computing" class="nav-link" data-scroll-target="#fault-tolerant-computing">Fault-tolerant computing:</a></li>
+  <li><a href="#spark-has-an-unified-engine" id="toc-spark-has-an-unified-engine" class="nav-link" data-scroll-target="#spark-has-an-unified-engine">Spark has an Unified Engine</a></li>
+  <li><a href="#spark-is-ployglot" id="toc-spark-is-ployglot" class="nav-link" data-scroll-target="#spark-is-ployglot">Spark is Ployglot</a></li>
+  </ul></li>
   </ul>
 </nav>
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(4)</span></div><div class="category" data-category="YXBhY2hlLXNwYXJr">apache-spark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZGF0YS1lbmdpbmVlcmluZw==">data-engineering <span class="quarto-category-count">(3)</span></div><div class="category" data-category="ZGlzdHJpYnV0ZWQtY29tcHV0aW5n">distributed-computing <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZG9ja2Vy">docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n">History of Computing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UGVyc29uYWwlMjBSZWZsZWN0aW9u">Personal Reflection <span class="quarto-category-count">(1)</span></div></div></div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
-</div>
+<h1 class="title">Essentials of Apache Spark</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">distributed-computing</div>
+    <div class="quarto-category">data-engineering</div>
+    <div class="quarto-category">apache-spark</div>
+  </div>
+  </div>
 
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 5, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -221,141 +180,48 @@ window.Quarto = {
 </header>
 
 
-<section id="all-posts" class="level2">
-<h2 class="anchored" data-anchor-id="all-posts">All Posts</h2>
-<p>Complete archive of my writings on technology, data, and distributed systems.</p>
+<section id="apache-spark" class="level2">
+<h2 class="anchored" data-anchor-id="apache-spark">Apache Spark</h2>
+<p>Apache Spark was developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/03-Apache_Spark_logo-01.png" class="img-fluid figure-img"></p>
+<figcaption>Apache Spark</figcaption>
+</figure>
+</div>
+<p>Spark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts</p>
+<ul>
+<li>In-memory computing</li>
+<li>Partitioning</li>
+<li>Fault-tolerant computing</li>
+<li>Unified engine for big data ecosystem</li>
+</ul>
+<section id="in-memory-computing" class="level3">
+<h3 class="anchored" data-anchor-id="in-memory-computing">In-memory computing:</h3>
+<p>Spark works via in-memory computing that retains the data cached in the memory. This alone can yield 100-1000x speedups. Imagine a computation with many steps. At each step, the data must be read from the disk, loaded into memory (RAM), processed, intermediate results are written back. This operation must be repeated until the operation is completed. Clearly, the bottleneck is the repeated read, write cycle of intermediary data to hard disk. Spark eliminates most of this repetitive I/O on the disk by keeping the intermediate results in memory, dramatically accelerating performance. Spark intelligently manages the memory by keeping maximum of the partition data in memory (RAM). When the partition data exceeds the allocated in-memory, spark spills over the least frequently used partitions to the physical memory (disk) and quickly read back if and when the partition is needed.</p>
 </section>
-<section id="latest-posts" class="level2">
-<h2 class="anchored" data-anchor-id="latest-posts">Latest Posts</h2>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-default">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="ZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2FwYWNoZS1zcGFyaw==" data-listing-date-sort="1767571200000" data-listing-file-modified-sort="1767706763151" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="488">
-<div class="thumbnail"><a href="../posts/2026-01-05-spark.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/03-Apache_Spark_logo-01.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-05-spark.html" class="no-external">Essentials of Apache Spark</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlLXNwYXJr'); return false;">apache-spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-05-spark.html" class="no-external">
-Apache Spark was developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-05-spark.html" class="no-external">
-<div class="listing-date">
-Jan 5, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="ZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2FwYWNoZS1zcGFyaw==" data-listing-date-sort="1766448000000" data-listing-file-modified-sort="1767706763151" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205">
-<div class="thumbnail"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/02-bigdata-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">Spark and Big data Engineering</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlLXNwYXJr'); return false;">apache-spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big…
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<div class="listing-date">
-Dec 23, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5nJTJDUGVyc29uYWwlMjBSZWZsZWN0aW9u" data-listing-date-sort="1764201600000" data-listing-file-modified-sort="1767706763151" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="468">
-<div class="thumbnail"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/01-jacquard-00.jpeg" alt="Portrait of Joseph Marie Jacquard woven in silk fabric using punched cards"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">Weaving Code: When the Loom Met the Algorithm</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n'); return false;">History of Computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGVyc29uYWwlMjBSZWZsZWN0aW9u'); return false;">Personal Reflection</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<p>A reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<div class="listing-date">
-Nov 27, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="ZG9ja2VyJTJDZGF0YS1lbmdpbmVlcmluZw==" data-listing-date-sort="1762560000000" data-listing-file-modified-sort="1767706763151" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="892">
-<div class="thumbnail"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">A Data Pipeline is a distributed system. Start Architecting It Like One</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZG9ja2Vy'); return false;">docker</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-If your data pipeline has more than one component (e.g python and a database), it is already a distributed system. Treating it anything less is why pipelines break when…<strong></strong>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<div class="listing-date">
-Nov 8, 2025
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
-<p><a href="..">← Back to Home</a></p>
+<section id="abstractions-in-spark" class="level3">
+<h3 class="anchored" data-anchor-id="abstractions-in-spark">Abstractions in Spark</h3>
+<p>Spark developed its core abstraction called Resilient Distributed Datasets followed by the popular Dataset and DataFrame which are the latest higher level API implementations of Spark.</p>
+</section>
+<section id="data-partitioning" class="level3">
+<h3 class="anchored" data-anchor-id="data-partitioning">Data Partitioning:</h3>
+<p>Spark partitions the data either by a variable in the data or arbitrarily by equal size. Partitioning by a variable of the data frame can be created using <code>partitionby()</code> method and arbitrary partitions can be created using <code>repartition()</code> method. Proper partitioning is critical for parallelism and optimized performance.</p>
+</section>
+<section id="fault-tolerant-computing" class="level3">
+<h3 class="anchored" data-anchor-id="fault-tolerant-computing">Fault-tolerant computing:</h3>
+<p>Spark is fault tolerant since it can rapidly recreate the partition data on any failed nodes. Sparks tracks the lineage of the partition from the original data. If a node fails, spark rebuilds the lost data without ever stopping or restarting the process. This enabled horizontal scaling to handle petabytes of data reliably.</p>
+</section>
+<section id="spark-has-an-unified-engine" class="level3">
+<h3 class="anchored" data-anchor-id="spark-has-an-unified-engine">Spark has an Unified Engine</h3>
+<p>Traditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Spark Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it powerful modern data stack.</p>
+</section>
+<section id="spark-is-ployglot" class="level3">
+<h3 class="anchored" data-anchor-id="spark-is-ployglot">Spark is Ployglot</h3>
+<p>Spark’s core is written in Scala and APIs for Python (pyspark), Java, R (sparklyr) and SQL are available making it a powerful language across different data and statistical stacks. Spark documentation describes near identical performance across these languages.</p>
 
 
-
+</section>
 </section>
 
 </main> <!-- /main -->

@@ -7,6 +7,69 @@
     "text": "! Site is under construction\n I am a Data Engineer with experience in:\n\nBig Data Technologies: Spark, Kafka\nCloud Platforms: AWS, GCP, Azure\nContainerization: Docker, Kubernetes\nLanguages: Python, Scala, SQL,R\n\nI enjoy solving complex data problems and optimizing performance for large-scale applications."
   },
   {
+    "objectID": "posts/2026-01-05-spark.html",
+    "href": "posts/2026-01-05-spark.html",
+    "title": "Essentials of Apache Spark",
+    "section": "",
+    "text": "Apache Spark was developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.\n\n\n\nApache Spark\n\n\nSpark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts\n\nIn-memory computing\nPartitioning\nFault-tolerant computing\nUnified engine for big data ecosystem\n\n\n\nSpark works via in-memory computing that retains the data cached in the memory. This alone can yield 100-1000x speedups. Imagine a computation with many steps. At each step, the data must be read from the disk, loaded into memory (RAM), processed, intermediate results are written back. This operation must be repeated until the operation is completed. Clearly, the bottleneck is the repeated read, write cycle of intermediary data to hard disk. Spark eliminates most of this repetitive I/O on the disk by keeping the intermediate results in memory, dramatically accelerating performance. Spark intelligently manages the memory by keeping maximum of the partition data in memory (RAM). When the partition data exceeds the allocated in-memory, spark spills over the least frequently used partitions to the physical memory (disk) and quickly read back if and when the partition is needed.\n\n\n\nSpark developed its core abstraction called Resilient Distributed Datasets followed by the popular Dataset and DataFrame which are the latest higher level API implementations of Spark.\n\n\n\nSpark partitions the data either by a variable in the data or arbitrarily by equal size. Partitioning by a variable of the data frame can be created using partitionby() method and arbitrary partitions can be created using repartition() method. Proper partitioning is critical for parallelism and optimized performance.\n\n\n\nSpark is fault tolerant since it can rapidly recreate the partition data on any failed nodes. Sparks tracks the lineage of the partition from the original data. If a node fails, spark rebuilds the lost data without ever stopping or restarting the process. This enabled horizontal scaling to handle petabytes of data reliably.\n\n\n\nTraditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Spark Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it powerful modern data stack.\n\n\n\nSpark’s core is written in Scala and APIs for Python (pyspark), Java, R (sparklyr) and SQL are available making it a powerful language across different data and statistical stacks. Spark documentation describes near identical performance across these languages."
+  },
+  {
+    "objectID": "posts/2026-01-05-spark.html#apache-spark",
+    "href": "posts/2026-01-05-spark.html#apache-spark",
+    "title": "Essentials of Apache Spark",
+    "section": "",
+    "text": "Apache Spark was developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.\n\n\n\nApache Spark\n\n\nSpark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts\n\nIn-memory computing\nPartitioning\nFault-tolerant computing\nUnified engine for big data ecosystem\n\n\n\nSpark works via in-memory computing that retains the data cached in the memory. This alone can yield 100-1000x speedups. Imagine a computation with many steps. At each step, the data must be read from the disk, loaded into memory (RAM), processed, intermediate results are written back. This operation must be repeated until the operation is completed. Clearly, the bottleneck is the repeated read, write cycle of intermediary data to hard disk. Spark eliminates most of this repetitive I/O on the disk by keeping the intermediate results in memory, dramatically accelerating performance. Spark intelligently manages the memory by keeping maximum of the partition data in memory (RAM). When the partition data exceeds the allocated in-memory, spark spills over the least frequently used partitions to the physical memory (disk) and quickly read back if and when the partition is needed.\n\n\n\nSpark developed its core abstraction called Resilient Distributed Datasets followed by the popular Dataset and DataFrame which are the latest higher level API implementations of Spark.\n\n\n\nSpark partitions the data either by a variable in the data or arbitrarily by equal size. Partitioning by a variable of the data frame can be created using partitionby() method and arbitrary partitions can be created using repartition() method. Proper partitioning is critical for parallelism and optimized performance.\n\n\n\nSpark is fault tolerant since it can rapidly recreate the partition data on any failed nodes. Sparks tracks the lineage of the partition from the original data. If a node fails, spark rebuilds the lost data without ever stopping or restarting the process. This enabled horizontal scaling to handle petabytes of data reliably.\n\n\n\nTraditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Spark Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it powerful modern data stack.\n\n\n\nSpark’s core is written in Scala and APIs for Python (pyspark), Java, R (sparklyr) and SQL are available making it a powerful language across different data and statistical stacks. Spark documentation describes near identical performance across these languages."
+  },
+  {
+    "objectID": "posts/index.html",
+    "href": "posts/index.html",
+    "title": "Blog",
+    "section": "",
+    "text": "Complete archive of my writings on technology, data, and distributed systems."
+  },
+  {
+    "objectID": "posts/index.html#all-posts",
+    "href": "posts/index.html#all-posts",
+    "title": "Blog",
+    "section": "",
+    "text": "Complete archive of my writings on technology, data, and distributed systems."
+  },
+  {
+    "objectID": "posts/index.html#latest-posts",
+    "href": "posts/index.html#latest-posts",
+    "title": "Blog",
+    "section": "Latest Posts",
+    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nEssentials of Apache Spark\n\n\n\ndistributed-computing\n\ndata-engineering\n\napache-spark\n\n\n\n\n\n\n\n\n\nJan 5, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nSpark and Big data Engineering\n\n\n\ndistributed-computing\n\ndata-engineering\n\napache-spark\n\n\n\n\n\n\n\n\n\nDec 23, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nWeaving Code: When the Loom Met the Algorithm\n\n\n\nHistory of Computing\n\nPersonal Reflection\n\n\n\nA reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.\n\n\n\n\n\nNov 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata-engineering\n\n\n\n\n\n\n\n\n\nNov 8, 2025\n\n\n\n\n\nNo matching items\n\n← Back to Home"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to My Personal Website",
+    "section": "",
+    "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
+  },
+  {
+    "objectID": "index.html#section",
+    "href": "index.html#section",
+    "title": "Welcome to My Personal Website",
+    "section": "",
+    "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
+  },
+  {
+    "objectID": "posts/2025-12-23-Bigdata-processing.html",
+    "href": "posts/2025-12-23-Bigdata-processing.html",
+    "title": "Spark and Big data Engineering",
+    "section": "",
+    "text": "Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.\nBroadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called “partitions”) that can be processed efficiently on ordinary machines with moderate resources.\n\n\n\nBig Data Engineering is Distributed Computing\n\n\nBuilding high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains."
+  },
+  {
+    "objectID": "posts/2025-12-23-Bigdata-processing.html#big-data-processing",
+    "href": "posts/2025-12-23-Bigdata-processing.html#big-data-processing",
+    "title": "Spark and Big data Engineering",
+    "section": "",
+    "text": "Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.\nBroadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called “partitions”) that can be processed efficiently on ordinary machines with moderate resources.\n\n\n\nBig Data Engineering is Distributed Computing\n\n\nBuilding high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains."
+  },
+  {
     "objectID": "posts/2025-11-09-docker-data-pipeline.html",
     "href": "posts/2025-11-09-docker-data-pipeline.html",
     "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
@@ -40,41 +103,6 @@
     "title": "A Data Pipeline is a distributed system. Start Architecting It Like One",
     "section": "Summary",
     "text": "Summary\nIn this guide, we transformed a simple Python app into a production-ready data pipeline by adopting distributed systems principles. - Service Discovery: Containers communicate through Docker DNS (dbms) instead of hardcoded IPs. - Configuration Management: All parameters are externalized through CLI arguments and environment variables. - Network Isolation: Secure bridge network enables container-to-container communication. - Data Persistence: Named volumes ensure database survival across container restarts. - Orchestration: Docker Compose manages multi-service dependencies and lifecycle.\nTreating data pipelines as a distributed systems from the beginning eliminates the system breakdown across environments and creates infrastructure that scales from local development to production deployment.\nThe complete pipeline is available in GitHub."
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Data Engineering & Distributed Systems",
-    "section": "",
-    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
-  },
-  {
-    "objectID": "index.html#welcome",
-    "href": "index.html#welcome",
-    "title": "Data Engineering & Distributed Systems",
-    "section": "",
-    "text": "I am a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
-  },
-  {
-    "objectID": "posts/index.html",
-    "href": "posts/index.html",
-    "title": "Blog",
-    "section": "",
-    "text": "Complete archive of my writings on technology, data, and distributed systems."
-  },
-  {
-    "objectID": "posts/index.html#all-posts",
-    "href": "posts/index.html#all-posts",
-    "title": "Blog",
-    "section": "",
-    "text": "Complete archive of my writings on technology, data, and distributed systems."
-  },
-  {
-    "objectID": "posts/index.html#latest-posts",
-    "href": "posts/index.html#latest-posts",
-    "title": "Blog",
-    "section": "Latest Posts",
-    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nWeaving Code: When the Loom Met the Algorithm\n\n\n\nHistory of Computing\n\nPersonal Reflection\n\n\n\nA reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.\n\n\n\n\n\nNov 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata-engineering\n\n\n\n\n\n\n\n\n\nNov 8, 2025\n\n\n\n\n\nNo matching items\n\n← Back to Home"
   },
   {
     "objectID": "posts/2025-11-27-jacquard.html",
