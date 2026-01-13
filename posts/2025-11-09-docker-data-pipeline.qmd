@@ -7,15 +7,13 @@ execute:
   eval: false
 ---
 
+A data pipeline already a distributed system since it has multiple component services. Treating it anything less is why pipelines break when moved from a local machine to production. To build a system that works everywhere, one must consider **service discovery, configuration management and network isolation** right from the beginning.
 
-A data pipeline already a distributed system since it has multiple component services. Treating it anything less is why pipelines break when moved from a local machine to production. 
-To build a system that works everywhere, one must consider **service discovery, configuration management and network isolation** right from the beginning. 
- 
-Let us a build production ready and automated data ingestion pipeline using docker. We will first build a simple python app that takes a csv and stores in a PostgreSQL database, then evolves into a multi-container architecture where a data-importer service automatically ingests data into a dedicated DBMS. 
+Let us a build production ready and automated data ingestion pipeline using docker. We will first build a simple python app that takes a csv and stores in a PostgreSQL database, then evolves into a multi-container architecture where a data-importer service automatically ingests data into a dedicated DBMS.
 
-For this data pipeline, lets get [Paris AirBnB Listings](https://data.insideairbnb.com/france/ile-de-france/paris/2025-09-12/data/listings.csv.gz) data  and  build that data importer app. This app will take this csv data and store it into a database inside the PostgreSQL container. To make this app usable for any data, we will parametrize all the input variables. 
+For this data pipeline, lets get [Paris AirBnB Listings](https://data.insideairbnb.com/france/ile-de-france/paris/2025-09-12/data/listings.csv.gz) data and build that data importer app. This app will take this csv data and store it into a database inside the PostgreSQL container. To make this app usable for any data, we will parametrize all the input variables.
 
-```python
+``` python
 #data_importer.py
 import os
 import sys
@@ -54,11 +52,11 @@ This app takes a CSV file and creates a `URL` object with parameterized connec
 
 ## Containerizing the Application
 
-We can containerize this app simply using a Dockerfile. Assuming this script is stored under `./src/data_importer.py` and the downloaded data is placed in `data/01_paris_airbnb_listings.csv`. We will need pandas, sqlalchemy and psycopg2 as dependencies. 
+We can containerize this app simply using a Dockerfile. Assuming this script is stored under `./src/data_importer.py` and the downloaded data is placed in `data/01_paris_airbnb_listings.csv`. We will need pandas, sqlalchemy and psycopg2 as dependencies.
 
 Let's create a `requirements.txt` in the current working directory that will be used to build the docker image.
 
-```txt
+``` txt
 pandas==2.3.1
 numpy==2.0.2
 SQLAlchemy==2.0.43
@@ -67,7 +65,7 @@ psycopg2-binary==2.9.11
 
 We will use python 3.9-slim as a base image and install the dependencies copy the data and script. We will run the app inside the container and the arguments variables can be passed using the `CMD` operator.
 
-```Dockerfile
+``` dockerfile
 FROM python:3.9-slim
 WORKDIR /data_importer
 COPY requirements.txt .
@@ -75,11 +73,11 @@ RUN pip install --no-cache-dir -r requirements.txt
 COPY ./data ./src ./
 ENTRYPOINT ["python","data_importer.py"]
 CMD ["01_paris_airbnb_listings.csv","sqluser","secret","dbms","5432", "global_data","paris_airbnb" ]
-
 ```
 
-The image can be built using. 
-```bash
+The image can be built using.
+
+``` bash
 docker build -t data_importer .
 ```
 
@@ -89,8 +87,7 @@ The above command will yield an image named `data_importer`.
 
 Once the image is successfully built, we can create a distributed system using docker-compose. We will use PostgreSQL 14 image for database and create a database service `dbms`. We will use a named volume `pgdata` for data persistence and use a mounted volume to enable communication between the `data_importer` container. The mounted volume will be mapped between the working directory of the data_importer app and the physical location in the local machine. This way, the system can take any data inside the local data directory and import to the SQL database automatically and securely. We will use a bridge network named `telnet` to enable container-to -container communication. lets save these parameters in a `docker-compose.yml` in the current working directory.
 
-
-```yml
+``` yml
 services :
   dbms :
     image : postgres:14
@@ -122,22 +119,23 @@ networks :
     driver : bridge
 ```
 
-
 ## Deployment
 
-The complete ETL pipeline can be deployed using: 
+The complete ETL pipeline can be deployed using:
 
-```bash
+``` bash
 docker-compose up -d
 ```
 
 Upon successful execution, the data would be safely stored inside the `global_data` database in the `dbms` server. This can be verified using a docker exec command.
-```bash
+
+``` bash
 docker exec -it sql_dbms_1 psql -U sqluser -d global_data  
 ```
 
 Which yields
-```bash
+
+``` bash
 
 psql (14.19 (Debian 14.19-1.pgdg13+1))  
 Type "help" for help.  
@@ -156,12 +154,17 @@ Note that the table_name is correctly named as `paris_airbnb_data` contary to `p
 
 ## Summary
 
-In this guide, we transformed a simple Python app into a production-ready data pipeline by adopting distributed systems principles. 
-- **Service Discovery:** Containers communicate through Docker DNS (`dbms`) instead of hardcoded IPs.
-- **Configuration Management:** All parameters are externalized through CLI arguments and environment variables.
-- **Network Isolation:** Secure bridge network enables container-to-container communication.
-- **Data Persistence:** Named volumes ensure database survival across container restarts.
-- **Orchestration:** Docker Compose manages multi-service dependencies and lifecycle.
+In this guide, we transformed a simple Python app into a production-ready data pipeline by adopting distributed systems principles.
+
+-    **Service Discovery:** Containers communicate through Docker DNS (`dbms`) instead of hard-coded IPs.
+
+-   **Configuration Management:** All parameters are externalized through CLI arguments and environment variables.
+
+-    **Network Isolation:** Secure bridge network enables container-to-container communication.
+
+-    **Data Persistence:** Named volumes ensure database survival across container restarts.
+
+-    **Orchestration:** Docker Compose manages multi-service dependencies and lifecycle.
 
 Treating data pipelines as a distributed systems from the beginning eliminates the system breakdown across environments and creates infrastructure that scales from local development to production deployment.
 
