@@ -3,6 +3,7 @@ layout: post
 title: "A Data Pipeline is a distributed system. Start Architecting It Like One"
 date: 2025-11-08
 categories: [docker, data-engineering]
+description: "A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production."
 execute:
   eval: false
 ---

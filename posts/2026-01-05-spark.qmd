@@ -2,6 +2,7 @@
 layout: post
 title: "Essentials of Apache Spark"
 date: 2026-01-05
+description: "A brief summary of Apache Spark and its core features."
 categories: [distributed-computing, data-engineering, apache-spark]
 execute:
   eval: false
