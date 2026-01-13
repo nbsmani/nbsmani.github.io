@@ -11,6 +11,8 @@ A data pipeline already a distributed system since it has multiple component ser
 
 Let us a build production ready and automated data ingestion pipeline using docker. We will first build a simple python app that takes a csv and stores in a PostgreSQL database, then evolves into a multi-container architecture where a data-importer service automatically ingests data into a dedicated DBMS.
 
+![A Scalable pipeline that discovers and connects to isolated services using hostname, parameterized for compatibility and reusability. These features ensures this distributed system runs in different environments. (Image generated using Google Gemini AI NanoBananaPro image creation tool)](/assets/img/00-docker-01.jpg)
+
 For this data pipeline, lets get [Paris AirBnB Listings](https://data.insideairbnb.com/france/ile-de-france/paris/2025-09-12/data/listings.csv.gz) data and build that data importer app. This app will take this csv data and store it into a database inside the PostgreSQL container. To make this app usable for any data, we will parametrize all the input variables.
 
 ``` python
@@ -156,15 +158,15 @@ Note that the table_name is correctly named as `paris_airbnb_data` contary to `p
 
 In this guide, we transformed a simple Python app into a production-ready data pipeline by adopting distributed systems principles.
 
--    **Service Discovery:** Containers communicate through Docker DNS (`dbms`) instead of hard-coded IPs.
+-   **Service Discovery:** Containers communicate through Docker DNS (`dbms`) instead of hard-coded IPs.
 
 -   **Configuration Management:** All parameters are externalized through CLI arguments and environment variables.
 
--    **Network Isolation:** Secure bridge network enables container-to-container communication.
+-   **Network Isolation:** Secure bridge network enables container-to-container communication.
 
--    **Data Persistence:** Named volumes ensure database survival across container restarts.
+-   **Data Persistence:** Named volumes ensure database survival across container restarts.
 
--    **Orchestration:** Docker Compose manages multi-service dependencies and lifecycle.
+-   **Orchestration:** Docker Compose manages multi-service dependencies and lifecycle.
 
 Treating data pipelines as a distributed systems from the beginning eliminates the system breakdown across environments and creates infrastructure that scales from local development to production deployment.
 
