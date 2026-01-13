@@ -21,6 +21,6 @@ engineering expertise to data infrastructure challenges in the tech industry. I 
 - **Big Data Technologies**: Spark, Kafka
 - **Cloud Platforms**: AWS, GCP, Azure
 - **Containerization**: Docker, Kubernetes
-- **Languages**: Python, Scala, SQL,R
+- **Languages**: Python, SQL,R
 
 I enjoy solving complex data problems and optimizing performance for large-scale applications.
