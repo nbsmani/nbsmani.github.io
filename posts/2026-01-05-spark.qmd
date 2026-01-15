@@ -8,19 +8,28 @@ execute:
   eval: false
 ---
 
+Traditionally, processing big data was challenging because the sheer size of the data that exceeds far greater than the available compute resources. To handle such big data, Hadoop had "Hadoop Distributed File System (HDFS)" framework and batch processing through the `MapReduce` function. These innovations enabled distributed computing to run on commodity hardware. While this offered many advantages such as partitioned data, distributed processing etc, significant challenges remained in terms of scalability and speed since it is based on disc. This is because this way of distributed processing resulted in exponential read write cycles for each intermediate steps. 
+
+Spark was developed to address these important bottlenecks in terms of speed and efficiency by adopting "in-memory computing". This drasticially improved speed and efficiency of big data processing. There were many additional advantages in Spark which is detailed below.
+
+![Spark for Big Data processing](../assets/img/03-Spark-for-bdp-00.jpg)
+
+
 
 ## Apache Spark
 
 Apache Spark was  developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.
 
-![Apache Spark](../assets/img/03-Apache_Spark_logo-01.png)
 
-Spark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts 
+
+Spark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts:
 
 - In-memory computing 
 - Partitioning 
 - Fault-tolerant computing 
 - Unified engine for big data ecosystem
+
+![Apache Spark](../assets/img/03-Apache_Spark_logo-01.png)
 
 ### In-memory computing:
 
@@ -28,7 +37,7 @@ Spark works via in-memory computing that retains the data cached in the memory. 
 
 ### Abstractions in Spark
 
-Spark developed its core abstraction called Resilient Distributed Datasets followed by the popular Dataset and DataFrame which are the latest higher level API implementations of Spark.
+Spark developed its core abstraction called Resilient Distributed Datasets (RDD) in the 2010s followed by the now popular Dataset and DataFrame which are the latest (introduced 2015-2016)  higher level API implementations of Spark. DataFrames and Datasets are the preferred APIs today for their optimizations and ease of use. The RDDs still remain functional and used for specialized use cases.
 
 ### Data Partitioning:
 
@@ -40,11 +49,11 @@ Spark is fault tolerant since it can rapidly recreate the partition data on any 
 
 ### Spark has an Unified Engine
 
-Traditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Spark Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it a powerful modern data stack.
+Traditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Structured Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it a powerful modern data stack.
 
-### Spark is Ployglot
+### Spark is Polyglot
 
 Spark's core is written in Scala and APIs for Python (pyspark), Java, R (sparklyr) and SQL are available making it a powerful language across different data and statistical stacks. Spark documentation describes near identical performance across these languages.
 
 ### Conclusion
-Apache Spark revolutionized big data processing by providing a unified, in-memory computing framework that addressed the limitations of traditional Hadoop ecosystems. By combining in-memory processing, intelligent partitioning, fault tolerance, and a polyglot API approach, Spark delivers dramatic performance improvements while simplifying complex data architectures. Its ability to handle diverse workloads from batch processing and real-time streaming to machine learning and graph analytics. All these opeations are efficiently performed through a single integrated engine makes it a cornerstone of modern data platforms. As data volumes continue to grow and processing demands become more complex, Spark's balanced approach of performance, reliability, and developer accessibility ensures its enduring relevance in the data engineering landscape.
+Apache Spark revolutionized big data processing by providing a unified, in-memory computing framework that addressed the limitations of traditional Hadoop ecosystems. By combining in-memory processing, intelligent partitioning, fault tolerance, and a polyglot API approach, Spark delivers dramatic performance improvements while simplifying complex data architectures. Its ability to handle diverse workloads from batch processing and real-time streaming to machine learning and graph analytics. All these operations are efficiently performed through a single integrated engine makes it a cornerstone of modern data platforms. As data volumes continue to grow and processing demands become more complex, Spark's balanced approach of performance, reliability, and developer accessibility ensures its enduring relevance in the data engineering landscape.

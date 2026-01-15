@@ -170,6 +170,12 @@ p {
     border-bottom: 2px solid var(--accent-primary);
 }
 
+.navbar-brand img {
+    height: 40px !important;
+    width: auto !important;
+    max-height: 40px !important;
+}
+
 footer {
     background: var(--bg-primary);
     padding: var(--spacing-xl) 0;
