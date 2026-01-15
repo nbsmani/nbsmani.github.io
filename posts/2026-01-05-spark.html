@@ -82,6 +82,10 @@ ul.task-list li input[type="checkbox"] {
     <nav class="navbar navbar-expand-lg " data-bs-theme="dark">
       <div class="navbar-container container-fluid">
       <div class="navbar-brand-container mx-auto">
+    <a href="../index.html" class="navbar-brand navbar-brand-logo">
+    <img src=".././assets/img/logo/logo_dark.jpg" alt="" class="navbar-logo light-content">
+    <img src=".././assets/img/logo/logo_dark.jpg" alt="" class="navbar-logo dark-content">
+    </a>
     <a class="navbar-brand" href="../index.html">
     <span class="navbar-title">Balasubramaniam Namasivayam</span>
     </a>
@@ -143,7 +147,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#data-partitioning" id="toc-data-partitioning" class="nav-link" data-scroll-target="#data-partitioning">Data Partitioning:</a></li>
   <li><a href="#fault-tolerant-computing" id="toc-fault-tolerant-computing" class="nav-link" data-scroll-target="#fault-tolerant-computing">Fault-tolerant computing:</a></li>
   <li><a href="#spark-has-an-unified-engine" id="toc-spark-has-an-unified-engine" class="nav-link" data-scroll-target="#spark-has-an-unified-engine">Spark has an Unified Engine</a></li>
-  <li><a href="#spark-is-ployglot" id="toc-spark-is-ployglot" class="nav-link" data-scroll-target="#spark-is-ployglot">Spark is Ployglot</a></li>
+  <li><a href="#spark-is-polyglot" id="toc-spark-is-polyglot" class="nav-link" data-scroll-target="#spark-is-polyglot">Spark is Polyglot</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul></li>
   </ul>
@@ -187,29 +191,37 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
+<p>Traditionally, processing big data was challenging because the sheer size of the data that exceeds far greater than the available compute resources. To handle such big data, Hadoop had “Hadoop Distributed File System (HDFS)” framework and batch processing through the <code>MapReduce</code> function. These innovations enabled distributed computing to run on commodity hardware. While this offered many advantages such as partitioned data, distributed processing etc, significant challenges remained in terms of scalability and speed since it is based on disc. This is because this way of distributed processing resulted in exponential read write cycles for each intermediate steps.</p>
+<p>Spark was developed to address these important bottlenecks in terms of speed and efficiency by adopting “in-memory computing”. This drasticially improved speed and efficiency of big data processing. There were many additional advantages in Spark which is detailed below.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/03-Spark-for-bdp-00.jpg" class="img-fluid figure-img"></p>
+<figcaption>Spark for Big Data processing</figcaption>
+</figure>
+</div>
 <section id="apache-spark" class="level2">
 <h2 class="anchored" data-anchor-id="apache-spark">Apache Spark</h2>
 <p>Apache Spark was developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../assets/img/03-Apache_Spark_logo-01.png" class="img-fluid figure-img"></p>
-<figcaption>Apache Spark</figcaption>
-</figure>
-</div>
-<p>Spark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts</p>
+<p>Spark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts:</p>
 <ul>
 <li>In-memory computing</li>
 <li>Partitioning</li>
 <li>Fault-tolerant computing</li>
 <li>Unified engine for big data ecosystem</li>
 </ul>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/03-Apache_Spark_logo-01.png" class="img-fluid figure-img"></p>
+<figcaption>Apache Spark</figcaption>
+</figure>
+</div>
 <section id="in-memory-computing" class="level3">
 <h3 class="anchored" data-anchor-id="in-memory-computing">In-memory computing:</h3>
 <p>Spark works via in-memory computing that retains the data cached in the memory. This alone can yield 100-1000x speedups. Imagine a computation with many steps. At each step, the data must be read from the disk, loaded into memory (RAM), processed, intermediate results are written back. This operation must be repeated until the operation is completed. Clearly, the bottleneck is the repeated read, write cycle of intermediary data to hard disk. Spark eliminates most of this repetitive I/O on the disk by keeping the intermediate results in memory, dramatically accelerating performance. Spark intelligently manages the memory by keeping maximum of the partition data in memory (RAM). When the partition data exceeds the allocated in-memory, spark spills over the least frequently used partitions to the physical memory (disk) and quickly read back if and when the partition is needed.</p>
 </section>
 <section id="abstractions-in-spark" class="level3">
 <h3 class="anchored" data-anchor-id="abstractions-in-spark">Abstractions in Spark</h3>
-<p>Spark developed its core abstraction called Resilient Distributed Datasets followed by the popular Dataset and DataFrame which are the latest higher level API implementations of Spark.</p>
+<p>Spark developed its core abstraction called Resilient Distributed Datasets (RDD) in the 2010s followed by the now popular Dataset and DataFrame which are the latest (introduced 2015-2016) higher level API implementations of Spark. DataFrames and Datasets are the preferred APIs today for their optimizations and ease of use. The RDDs still remain functional and used for specialized use cases.</p>
 </section>
 <section id="data-partitioning" class="level3">
 <h3 class="anchored" data-anchor-id="data-partitioning">Data Partitioning:</h3>
@@ -221,15 +233,15 @@ ul.task-list li input[type="checkbox"] {
 </section>
 <section id="spark-has-an-unified-engine" class="level3">
 <h3 class="anchored" data-anchor-id="spark-has-an-unified-engine">Spark has an Unified Engine</h3>
-<p>Traditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Spark Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it a powerful modern data stack.</p>
+<p>Traditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Structured Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it a powerful modern data stack.</p>
 </section>
-<section id="spark-is-ployglot" class="level3">
-<h3 class="anchored" data-anchor-id="spark-is-ployglot">Spark is Ployglot</h3>
+<section id="spark-is-polyglot" class="level3">
+<h3 class="anchored" data-anchor-id="spark-is-polyglot">Spark is Polyglot</h3>
 <p>Spark’s core is written in Scala and APIs for Python (pyspark), Java, R (sparklyr) and SQL are available making it a powerful language across different data and statistical stacks. Spark documentation describes near identical performance across these languages.</p>
 </section>
 <section id="conclusion" class="level3">
 <h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
-<p>Apache Spark revolutionized big data processing by providing a unified, in-memory computing framework that addressed the limitations of traditional Hadoop ecosystems. By combining in-memory processing, intelligent partitioning, fault tolerance, and a polyglot API approach, Spark delivers dramatic performance improvements while simplifying complex data architectures. Its ability to handle diverse workloads from batch processing and real-time streaming to machine learning and graph analytics. All these opeations are efficiently performed through a single integrated engine makes it a cornerstone of modern data platforms. As data volumes continue to grow and processing demands become more complex, Spark’s balanced approach of performance, reliability, and developer accessibility ensures its enduring relevance in the data engineering landscape.</p>
+<p>Apache Spark revolutionized big data processing by providing a unified, in-memory computing framework that addressed the limitations of traditional Hadoop ecosystems. By combining in-memory processing, intelligent partitioning, fault tolerance, and a polyglot API approach, Spark delivers dramatic performance improvements while simplifying complex data architectures. Its ability to handle diverse workloads from batch processing and real-time streaming to machine learning and graph analytics. All these operations are efficiently performed through a single integrated engine makes it a cornerstone of modern data platforms. As data volumes continue to grow and processing demands become more complex, Spark’s balanced approach of performance, reliability, and developer accessibility ensures its enduring relevance in the data engineering landscape.</p>
 
 
 </section>
