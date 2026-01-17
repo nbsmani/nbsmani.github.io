@@ -133,7 +133,7 @@ docker-compose up -d
 Upon successful execution, the data would be safely stored inside the `global_data` database in the `dbms` server. This can be verified using a docker exec command.
 
 ``` bash
-docker exec -it sql_dbms_1 psql -U sqluser -d global_data  
+docker exec -it sql_dbms_1 psql -U sqluser -d global_data
 ```
 
 Which yields
