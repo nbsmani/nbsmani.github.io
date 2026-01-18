@@ -11,7 +11,6 @@ Do you know that the most famous image in the early history of computing is actu
 ![The Most Famous Image in the Early History of Computing. This is actually a portrait of a silk fabric on which the image of Jacquard was woven. *Portrait by Michel Marie Carquillat after Claude Bonnefond (circa 1839). [Public domain via Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Jacquard_loom_portrait.jpg).*
  ](../assets/img/01-jacquard-00.jpeg){fig-alt="Portrait of Joseph Marie Jacquard woven in silk fabric using punched cards" width="80%" fig-align="center"}
 
-
 Joseph Marie Jacquard was born in Lyon, France and was a weaver and master inventor. He was celebrated by the Emperor Napoleon for the invention of a "programmable loom". Jacquard's idea of using punched cards to represent where a thread must go up or down in fine silk fabric to produce motifs and patterns with unlimited resolution immediately became a royal sensation.
 
 Charles Babbage had not only personally possessed one of these portraits of Jacquard woven in silk using 24,000 punched cards, but was also deeply inspired by it. He adopted these very punched cards as the input device for his Analytical Engine. 
@@ -30,4 +29,4 @@ I started my career as a textile engineer, and I still vividly remember creating
 
 I just had a moment of awe witnessing the threads of technology woven into a perfect circle across the fabric of space and time. This convergence felt deeply personal. It is a powerful reminder that technology often spirals upward instead of progressing linearly.
 
-![AI-generated summary. Thanks to NotebookLM de Google](../assets/img/01-jacquard-02.png)
+![AI-generated visual summary of this blog post. Thanks to NotebookLM de Google](../assets/img/01-jacquard-02.png)
