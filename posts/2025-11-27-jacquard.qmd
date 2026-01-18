@@ -29,3 +29,5 @@ It was in that moment I saw the circle close. The punched cards of the 1800s hav
 I started my career as a textile engineer, and I still vividly remember creating punches in cardboard for the Jacquard loom using a piano card-punching machine during practical sessions. Fast forward to this day of writing, I am now living in Lyon and working at the intersection of informatics and complex data, still looking for patterns not on fabric but on data.
 
 I just had a moment of awe witnessing the threads of technology woven into a perfect circle across the fabric of space and time. This convergence felt deeply personal. It is a powerful reminder that technology often spirals upward instead of progressing linearly.
+
+![AI-generated summary. Thanks to NotebookLM de Google](../assets/img/01-jacquard-02.png)
