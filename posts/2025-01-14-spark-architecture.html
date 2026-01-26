@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2027-02-01">
+<meta name="description" content="A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.">
 
-<title>Blog – Balasubramaniam Namasivayam</title>
+<title>Essentials of Spark Architecture – Balasubramaniam Namasivayam</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +32,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -70,65 +70,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -159,7 +101,7 @@ window.Quarto = {
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../posts/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -194,24 +136,48 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#all-posts" id="toc-all-posts" class="nav-link active" data-scroll-target="#all-posts">All Posts</a></li>
-  <li><a href="#latest-posts" id="toc-latest-posts" class="nav-link" data-scroll-target="#latest-posts">Latest Posts</a></li>
+  <li><a href="#driver-program" id="toc-driver-program" class="nav-link active" data-scroll-target="#driver-program">Driver Program:</a></li>
+  <li><a href="#sparkcontext-and-sparksession" id="toc-sparkcontext-and-sparksession" class="nav-link" data-scroll-target="#sparkcontext-and-sparksession">SparkContext and SparkSession</a>
+  <ul class="collapse">
+  <li><a href="#sparkcontext" id="toc-sparkcontext" class="nav-link" data-scroll-target="#sparkcontext">SparkContext</a></li>
+  <li><a href="#sparksession" id="toc-sparksession" class="nav-link" data-scroll-target="#sparksession">SparkSession</a></li>
+  <li><a href="#cluster-manager" id="toc-cluster-manager" class="nav-link" data-scroll-target="#cluster-manager">Cluster manager :</a></li>
+  <li><a href="#executors" id="toc-executors" class="nav-link" data-scroll-target="#executors">Executors</a></li>
+  </ul></li>
   </ul>
 </nav>
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(5)</span></div><div class="category" data-category="YXBhY2hlLXNwYXJr">apache-spark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZGF0YS1lbmdpbmVlcmluZw==">data-engineering <span class="quarto-category-count">(4)</span></div><div class="category" data-category="ZGlzdHJpYnV0ZWQtY29tcHV0aW5n">distributed-computing <span class="quarto-category-count">(3)</span></div><div class="category" data-category="ZG9ja2Vy">docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n">History of Computing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UGVyc29uYWwlMjBSZWZsZWN0aW9u">Personal Reflection <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHlzcGFyaw==">pyspark <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U3Bhcms=">Spark <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3BhcmtTUUw=">sparkSQL <span class="quarto-category-count">(1)</span></div></div></div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
-</div>
+<h1 class="title">Essentials of Spark Architecture</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Spark</div>
+    <div class="quarto-category">data-engineering</div>
+    <div class="quarto-category">distributed-computing</div>
+    <div class="quarto-category">pyspark</div>
+    <div class="quarto-category">sparkSQL</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 1, 2027</p>
+    </div>
+  </div>
   
     
   </div>
@@ -221,176 +187,40 @@ window.Quarto = {
 </header>
 
 
-<section id="all-posts" class="level2">
-<h2 class="anchored" data-anchor-id="all-posts">All Posts</h2>
-<p>Complete archive of my writings on technology, data, and distributed systems.</p>
+<p>Apache Spark is originally built on RDD abstraction and it is constructed in a well defined layered architecture. DataFrames and Datasets are used in modern spark applications.</p>
+<p>In its core, Spark has three main components. - Driver Program - Cluster Manager - Spark Executors</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/04-sparkArchitecture-00.png" class="img-fluid figure-img"></p>
+<figcaption>Spark Architecture</figcaption>
+</figure>
+</div>
+<section id="driver-program" class="level2">
+<h2 class="anchored" data-anchor-id="driver-program">Driver Program:</h2>
+<p>Any script that uses spark to process big (and not so big) data is a spark application. The Driver program is the entry point of the application and it is where the main script is hosted.</p>
+<p>The driver program reads the script and creates a logical plan of operations Directed Acyclic Graph. In spark, there are two types of operations. Transformations and actions. The DAG is comprised of these transformations and actions. The smallest sub unit of any operation is a task and a set of tasks are grouped in a stage. Spark DAG is built according to the logic of the user’s application. The logical DAG is broken down into stages and TaskScheduler serializes and assigns individual tasks. The Driver program stores the metadata of the tasks shared with the executors and the results are collected back once the tasks are completed. The taks lineage is readily available in the driver so that it can quickly rebuild a lost partition in case a failure. The process of building serialized stages is called DAG scheduling. The scheduled DAG stages are then transferred to Task Scheduler. TaskScheduler assigns tasks to executors. Actual execution happens only when an action is required, this is the so called ‘Lazy Evaluation’.</p>
 </section>
-<section id="latest-posts" class="level2">
-<h2 class="anchored" data-anchor-id="latest-posts">Latest Posts</h2>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-default">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="U3BhcmslMkNkYXRhLWVuZ2luZWVyaW5nJTJDZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDcHlzcGFyayUyQ3NwYXJrU1FM" data-listing-date-sort="1801440000000" data-listing-file-modified-sort="1769433064299" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="572">
-<div class="thumbnail"><a href="../posts/2025-01-14-spark-architecture.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/04-sparkArchitecture-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-01-14-spark-architecture.html" class="no-external">Essentials of Spark Architecture</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('U3Bhcms='); return false;">Spark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHlzcGFyaw=='); return false;">pyspark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3BhcmtTUUw='); return false;">sparkSQL</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-01-14-spark-architecture.html" class="no-external">
-<p>A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-01-14-spark-architecture.html" class="no-external">
-<div class="listing-date">
-Feb 1, 2027
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="ZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2FwYWNoZS1zcGFyaw==" data-listing-date-sort="1767571200000" data-listing-file-modified-sort="1769433064300" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="782">
-<div class="thumbnail"><a href="../posts/2026-01-05-spark.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/03-Spark-for-bdp-00.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-05-spark.html" class="no-external">Essentials of Apache Spark</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlLXNwYXJr'); return false;">apache-spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-05-spark.html" class="no-external">
-<p>A brief summary of Apache Spark and its core features.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-05-spark.html" class="no-external">
-<div class="listing-date">
-Jan 5, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="ZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2FwYWNoZS1zcGFyaw==" data-listing-date-sort="1766448000000" data-listing-file-modified-sort="1769433064300" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205">
-<div class="thumbnail"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/02-bigdata-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">Spark and Big data Engineering</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlLXNwYXJr'); return false;">apache-spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<p>Essentials of Big Data Engineering. In essence, all big data processing is distributed computing.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<div class="listing-date">
-Dec 23, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5nJTJDUGVyc29uYWwlMjBSZWZsZWN0aW9u" data-listing-date-sort="1764201600000" data-listing-file-modified-sort="1769433064300" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="479">
-<div class="thumbnail"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/01-jacquard-00.jpeg" alt="Portrait of Joseph Marie Jacquard woven in silk fabric using punched cards"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">Weaving Code: When the Loom Met the Algorithm</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n'); return false;">History of Computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGVyc29uYWwlMjBSZWZsZWN0aW9u'); return false;">Personal Reflection</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<p>A reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<div class="listing-date">
-Nov 27, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="ZG9ja2VyJTJDZGF0YS1lbmdpbmVlcmluZw==" data-listing-date-sort="1762560000000" data-listing-file-modified-sort="1769433064299" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="927">
-<div class="thumbnail"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/00-docker-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">A Data Pipeline is a distributed system. Start Architecting It Like One</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZG9ja2Vy'); return false;">docker</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<p>A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<div class="listing-date">
-Nov 8, 2025
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
-<p><a href="..">← Back to Home</a></p>
+<section id="sparkcontext-and-sparksession" class="level2">
+<h2 class="anchored" data-anchor-id="sparkcontext-and-sparksession">SparkContext and SparkSession</h2>
+<section id="sparkcontext" class="level3">
+<h3 class="anchored" data-anchor-id="sparkcontext">SparkContext</h3>
+<p>SparkContext is created by the driver program and this was formerly the entry point until spark 2.x.x. SparkContext connects to the cluster manager and acquires the required resources for the distributed computation. It then sends the serialized DAG stages to the executor nodes and keeps track of the execution via regular heart beat messages.</p>
+</section>
+<section id="sparksession" class="level3">
+<h3 class="anchored" data-anchor-id="sparksession">SparkSession</h3>
+<p>SparkSession is the latest implementation in Spark v&gt;2.x.x. The Driver program creates SparkSession which is the entry point of a program. In SparkSession, along with SparkContext, SQL, Streaming, ML and Graph context are available and unified into one engine under the same SparkSession offering superior flexibility. SparkContext is now available as backward compatible to access low level RDD features. Since the higher level APIs are accessible with SparkSession, Apache recommends to initialize with SparkSession.</p>
+</section>
+<section id="cluster-manager" class="level3">
+<h3 class="anchored" data-anchor-id="cluster-manager">Cluster manager :</h3>
+<p>The computing resources are managed by the cluster manager. There are three different types of cluster management in Spark. Namely, Spark standalone, Kubernetes and YARN. Often the resource manager resides in master node but this depends on the deployment mode of the application. In local deployment mode, The driver and executor nodes are hosted in a single thread and spark manages the threads itself and no cluster manager is involved in this case.</p>
+<p>The resource manager receives requests from the task scheduler and launches executor processes on the worker nodes. The executor process(es) are launched in pods (kubernetes), containers /raw processes (spark standalone) depending on the configuration of the deployment. It then pings back the availability of the worker nodes and a connection is established between the spark driver program and the worker nodes.</p>
+</section>
+<section id="executors" class="level3">
+<h3 class="anchored" data-anchor-id="executors">Executors</h3>
+<p>The executor manages the task execution and manages the memory, it communicates with the driver program to report the status of the assigned tasks and return the computed results. The executors are also involved in shuffle operations and act as a server for other executors to access the local data of the executor.</p>
 
 
-
+</section>
 </section>
 
 </main> <!-- /main -->
