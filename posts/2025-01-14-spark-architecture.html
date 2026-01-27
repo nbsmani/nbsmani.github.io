@@ -6,8 +6,8 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2027-02-01">
-<meta name="description" content="A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.">
+<meta name="dcterms.date" content="2026-01-14">
+<meta name="description" content="Essentials of how Spark is constructed and inner mechanics of how a Spark job is executed.">
 
 <title>Essentials of Spark Architecture – Balasubramaniam Namasivayam</title>
 <style>
@@ -164,7 +164,7 @@ ul.task-list li input[type="checkbox"] {
 
 <div>
   <div class="description">
-    A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.
+    Essentials of how Spark is constructed and inner mechanics of how a Spark job is executed.
   </div>
 </div>
 
@@ -175,7 +175,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 1, 2027</p>
+      <p class="date">January 14, 2026</p>
     </div>
   </div>
   
@@ -188,7 +188,12 @@ ul.task-list li input[type="checkbox"] {
 
 
 <p>Apache Spark is originally built on RDD abstraction and it is constructed in a well defined layered architecture. DataFrames and Datasets are used in modern spark applications.</p>
-<p>In its core, Spark has three main components. - Driver Program - Cluster Manager - Spark Executors</p>
+<p>In its core, Spark has three main components.</p>
+<ul>
+<li>Driver Program</li>
+<li>Cluster Manager</li>
+<li>Spark Executors</li>
+</ul>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
 <p><img src="../assets/img/04-sparkArchitecture-00.png" class="img-fluid figure-img"></p>
