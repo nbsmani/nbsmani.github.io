@@ -1,9 +1,9 @@
 ---
 layout: post
 title: "Essentials of Spark Architecture"
-date: 2026-14-01
+date: 2026-01-14
 categories: [Spark, data-engineering, distributed-computing, pyspark, sparkSQL]
-description: "A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production."
+description: "Essentials of how Spark is constructed and inner mechanics of how a Spark job is executed."
 execute:
   eval: false
 ---
@@ -11,6 +11,7 @@ execute:
 Apache Spark is originally built on RDD abstraction and it is constructed in a well defined layered architecture. DataFrames and Datasets are used in modern spark applications.
 
 In its core, Spark has three main components.
+
 - Driver Program
 - Cluster Manager
 - Spark Executors
