@@ -24,15 +24,15 @@ Any script that uses spark to process big (and not so big) data is a spark appli
 
 The driver program reads the script and creates a logical plan of operations Directed Acyclic Graph.  In spark, there are two types of operations. Transformations and actions. The DAG is comprised of these transformations and actions. The smallest sub unit of any operation is a task and a set of tasks are grouped in a stage.  Spark DAG is built according to the logic of the user's application. The logical DAG is broken down into stages and TaskScheduler serializes and assigns individual tasks. The Driver program stores the metadata of the tasks shared with the executors and the results are collected back once the tasks are completed. The taks lineage is readily available in the driver so that it can quickly rebuild a lost partition in case a failure. The process of building serialized stages is called DAG scheduling. The scheduled DAG stages are then transferred to Task Scheduler. TaskScheduler assigns tasks to executors.  Actual execution happens only when an action is required, this is the so called 'Lazy Evaluation'.
 
-## SparkContext and SparkSession
-
-### SparkContext
-
-SparkContext is created by the driver program and this was formerly the entry point until spark 2.x.x. SparkContext connects to the cluster manager and acquires the required resources for the distributed computation. It then sends the  serialized  DAG stages to the executor nodes and keeps track of the execution via regular heart beat messages.
+## SparkSession and SparkContext
 
 ### SparkSession
 
 SparkSession is the latest implementation in Spark v>2.x.x. The Driver program creates SparkSession which is the entry point of a program. In SparkSession, along with SparkContext, SQL, Streaming, ML and Graph context are available and unified into one engine under the same SparkSession offering superior flexibility. SparkContext is now available as backward compatible to access low level RDD features. Since the higher level APIs are accessible with SparkSession, Apache recommends to initialize with SparkSession.
+
+### SparkContext
+
+SparkContext is created by the driver program and this was formerly the entry point until spark 2.x.x. SparkContext connects to the cluster manager and acquires the required resources for the distributed computation. It then sends the  serialized  DAG stages to the executor nodes and keeps track of the execution via regular heart beat messages.
 
 ### Cluster manager :
 
