@@ -137,10 +137,10 @@ ul.task-list li input[type="checkbox"] {
    
   <ul>
   <li><a href="#driver-program" id="toc-driver-program" class="nav-link active" data-scroll-target="#driver-program">Driver Program:</a></li>
-  <li><a href="#sparkcontext-and-sparksession" id="toc-sparkcontext-and-sparksession" class="nav-link" data-scroll-target="#sparkcontext-and-sparksession">SparkContext and SparkSession</a>
+  <li><a href="#sparksession-and-sparkcontext" id="toc-sparksession-and-sparkcontext" class="nav-link" data-scroll-target="#sparksession-and-sparkcontext">SparkSession and SparkContext</a>
   <ul class="collapse">
-  <li><a href="#sparkcontext" id="toc-sparkcontext" class="nav-link" data-scroll-target="#sparkcontext">SparkContext</a></li>
   <li><a href="#sparksession" id="toc-sparksession" class="nav-link" data-scroll-target="#sparksession">SparkSession</a></li>
+  <li><a href="#sparkcontext" id="toc-sparkcontext" class="nav-link" data-scroll-target="#sparkcontext">SparkContext</a></li>
   <li><a href="#cluster-manager" id="toc-cluster-manager" class="nav-link" data-scroll-target="#cluster-manager">Cluster manager :</a></li>
   <li><a href="#executors" id="toc-executors" class="nav-link" data-scroll-target="#executors">Executors</a></li>
   </ul></li>
@@ -205,15 +205,15 @@ ul.task-list li input[type="checkbox"] {
 <p>Any script that uses spark to process big (and not so big) data is a spark application. The Driver program is the entry point of the application and it is where the main script is hosted.</p>
 <p>The driver program reads the script and creates a logical plan of operations Directed Acyclic Graph. In spark, there are two types of operations. Transformations and actions. The DAG is comprised of these transformations and actions. The smallest sub unit of any operation is a task and a set of tasks are grouped in a stage. Spark DAG is built according to the logic of the user’s application. The logical DAG is broken down into stages and TaskScheduler serializes and assigns individual tasks. The Driver program stores the metadata of the tasks shared with the executors and the results are collected back once the tasks are completed. The taks lineage is readily available in the driver so that it can quickly rebuild a lost partition in case a failure. The process of building serialized stages is called DAG scheduling. The scheduled DAG stages are then transferred to Task Scheduler. TaskScheduler assigns tasks to executors. Actual execution happens only when an action is required, this is the so called ‘Lazy Evaluation’.</p>
 </section>
-<section id="sparkcontext-and-sparksession" class="level2">
-<h2 class="anchored" data-anchor-id="sparkcontext-and-sparksession">SparkContext and SparkSession</h2>
-<section id="sparkcontext" class="level3">
-<h3 class="anchored" data-anchor-id="sparkcontext">SparkContext</h3>
-<p>SparkContext is created by the driver program and this was formerly the entry point until spark 2.x.x. SparkContext connects to the cluster manager and acquires the required resources for the distributed computation. It then sends the serialized DAG stages to the executor nodes and keeps track of the execution via regular heart beat messages.</p>
-</section>
+<section id="sparksession-and-sparkcontext" class="level2">
+<h2 class="anchored" data-anchor-id="sparksession-and-sparkcontext">SparkSession and SparkContext</h2>
 <section id="sparksession" class="level3">
 <h3 class="anchored" data-anchor-id="sparksession">SparkSession</h3>
 <p>SparkSession is the latest implementation in Spark v&gt;2.x.x. The Driver program creates SparkSession which is the entry point of a program. In SparkSession, along with SparkContext, SQL, Streaming, ML and Graph context are available and unified into one engine under the same SparkSession offering superior flexibility. SparkContext is now available as backward compatible to access low level RDD features. Since the higher level APIs are accessible with SparkSession, Apache recommends to initialize with SparkSession.</p>
+</section>
+<section id="sparkcontext" class="level3">
+<h3 class="anchored" data-anchor-id="sparkcontext">SparkContext</h3>
+<p>SparkContext is created by the driver program and this was formerly the entry point until spark 2.x.x. SparkContext connects to the cluster manager and acquires the required resources for the distributed computation. It then sends the serialized DAG stages to the executor nodes and keeps track of the execution via regular heart beat messages.</p>
 </section>
 <section id="cluster-manager" class="level3">
 <h3 class="anchored" data-anchor-id="cluster-manager">Cluster manager :</h3>
