@@ -2,7 +2,8 @@
   {
     "listing": "/posts/index.html",
     "items": [
-      "/posts/2025-01-14-spark-architecture.html",
+      "/posts/2026-01-26-spark-query-optimization.html",
+      "/posts/2026-01-14-spark-architecture.html",
       "/posts/2026-01-05-spark.html",
       "/posts/2025-12-23-Bigdata-processing.html",
       "/posts/2025-11-27-jacquard.html",

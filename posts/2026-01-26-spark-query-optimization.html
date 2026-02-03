@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-01-26">
+<meta name="description" content="Essentials of Spark Query Optimization Process.">
 
-<title>Blog – Balasubramaniam Namasivayam</title>
+<title>Essentials of Spark Architecture – Balasubramaniam Namasivayam</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -30,8 +32,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/fuse.min.js"></script>
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -70,65 +70,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -159,7 +101,7 @@ window.Quarto = {
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../posts/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -194,24 +136,47 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#all-posts" id="toc-all-posts" class="nav-link active" data-scroll-target="#all-posts">All Posts</a></li>
-  <li><a href="#latest-posts" id="toc-latest-posts" class="nav-link" data-scroll-target="#latest-posts">Latest Posts</a></li>
+  <li><a href="#parsing" id="toc-parsing" class="nav-link active" data-scroll-target="#parsing">Parsing</a></li>
+  <li><a href="#analysis" id="toc-analysis" class="nav-link" data-scroll-target="#analysis">Analysis</a></li>
+  <li><a href="#logical-optimization" id="toc-logical-optimization" class="nav-link" data-scroll-target="#logical-optimization">Logical Optimization</a></li>
+  <li><a href="#physical-planning" id="toc-physical-planning" class="nav-link" data-scroll-target="#physical-planning">Physical Planning</a></li>
+  <li><a href="#code-generation-and-execution" id="toc-code-generation-and-execution" class="nav-link" data-scroll-target="#code-generation-and-execution">Code Generation and execution</a></li>
+  <li><a href="#visualizing-the-spark-optimization-steps" id="toc-visualizing-the-spark-optimization-steps" class="nav-link" data-scroll-target="#visualizing-the-spark-optimization-steps">Visualizing the Spark Optimization Steps</a></li>
   </ul>
 </nav>
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(6)</span></div><div class="category" data-category="YXBhY2hlLXNwYXJr">apache-spark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZGF0YS1lbmdpbmVlcmluZw==">data-engineering <span class="quarto-category-count">(5)</span></div><div class="category" data-category="ZGlzdHJpYnV0ZWQtY29tcHV0aW5n">distributed-computing <span class="quarto-category-count">(5)</span></div><div class="category" data-category="ZG9ja2Vy">docker <span class="quarto-category-count">(1)</span></div><div class="category" data-category="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n">History of Computing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UGVyc29uYWwlMjBSZWZsZWN0aW9u">Personal Reflection <span class="quarto-category-count">(1)</span></div><div class="category" data-category="cHlzcGFyaw==">pyspark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U3Bhcms=">Spark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c3Bhcmstb3B0aW1pemF0aW9u">spark-optimization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3BhcmtTUUw=">sparkSQL <span class="quarto-category-count">(2)</span></div></div></div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
-</div>
+<h1 class="title">Essentials of Spark Architecture</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">Spark</div>
+    <div class="quarto-category">data-engineering</div>
+    <div class="quarto-category">distributed-computing</div>
+    <div class="quarto-category">pyspark</div>
+    <div class="quarto-category">sparkSQL</div>
+    <div class="quarto-category">spark-optimization</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    Essentials of Spark Query Optimization Process.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">January 26, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -221,215 +186,51 @@ window.Quarto = {
 </header>
 
 
-<section id="all-posts" class="level2">
-<h2 class="anchored" data-anchor-id="all-posts">All Posts</h2>
-<p>Complete archive of my writings on technology, data, and distributed systems.</p>
+<p>Apache Spark has a query optimization engine that rewrites the user code for optimum computational cost and execution efficiency. The optimization process start is carried out in several steps from parsing the code to executing the optimized generated code.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/05-Spark-Query-Optimization-00.png" class="img-fluid figure-img"></p>
+<figcaption>Spark Query Optimization Steps</figcaption>
+</figure>
+</div>
+<section id="parsing" class="level3">
+<h3 class="anchored" data-anchor-id="parsing">Parsing</h3>
+<p>Each SQL / Hive queries are first read in the <code>Parsing</code> process. This parsing process converts the input into Abstract Syntax Tree (AST). This AST is called Unresolved Logical Plan.</p>
 </section>
-<section id="latest-posts" class="level2">
-<h2 class="anchored" data-anchor-id="latest-posts">Latest Posts</h2>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-default">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="U3BhcmslMkNkYXRhLWVuZ2luZWVyaW5nJTJDZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDcHlzcGFyayUyQ3NwYXJrU1FMJTJDc3Bhcmstb3B0aW1pemF0aW9u" data-listing-date-sort="1769385600000" data-listing-file-modified-sort="1770116315429" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="385">
-<div class="thumbnail"><a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/05-Spark-Query-Optimization-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">Essentials of Spark Architecture</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('U3Bhcms='); return false;">Spark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHlzcGFyaw=='); return false;">pyspark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3BhcmtTUUw='); return false;">sparkSQL</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3Bhcmstb3B0aW1pemF0aW9u'); return false;">spark-optimization</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">
-<p>Essentials of Spark Query Optimization Process.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">
-<div class="listing-date">
-Jan 26, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="U3BhcmslMkNkYXRhLWVuZ2luZWVyaW5nJTJDZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDcHlzcGFyayUyQ3NwYXJrU1FM" data-listing-date-sort="1768348800000" data-listing-file-modified-sort="1770116315429" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="572">
-<div class="thumbnail"><a href="../posts/2026-01-14-spark-architecture.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/04-sparkArchitecture-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-14-spark-architecture.html" class="no-external">Essentials of Spark Architecture</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('U3Bhcms='); return false;">Spark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHlzcGFyaw=='); return false;">pyspark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3BhcmtTUUw='); return false;">sparkSQL</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-14-spark-architecture.html" class="no-external">
-<p>Essentials of how Spark is constructed and inner mechanics of how a Spark job is executed.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-14-spark-architecture.html" class="no-external">
-<div class="listing-date">
-Jan 14, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="ZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2FwYWNoZS1zcGFyaw==" data-listing-date-sort="1767571200000" data-listing-file-modified-sort="1770116315429" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="782">
-<div class="thumbnail"><a href="../posts/2026-01-05-spark.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/03-Spark-for-bdp-00.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-05-spark.html" class="no-external">Essentials of Apache Spark</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlLXNwYXJr'); return false;">apache-spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-05-spark.html" class="no-external">
-<p>A brief summary of Apache Spark and its core features.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-05-spark.html" class="no-external">
-<div class="listing-date">
-Jan 5, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="ZGlzdHJpYnV0ZWQtY29tcHV0aW5nJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2FwYWNoZS1zcGFyaw==" data-listing-date-sort="1766448000000" data-listing-file-modified-sort="1770116315429" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205">
-<div class="thumbnail"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/02-bigdata-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">Spark and Big data Engineering</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlLXNwYXJr'); return false;">apache-spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<p>Essentials of Big Data Engineering. In essence, all big data processing is distributed computing.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<div class="listing-date">
-Dec 23, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5nJTJDUGVyc29uYWwlMjBSZWZsZWN0aW9u" data-listing-date-sort="1764201600000" data-listing-file-modified-sort="1770116315429" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="479">
-<div class="thumbnail"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/01-jacquard-00.jpeg" alt="Portrait of Joseph Marie Jacquard woven in silk fabric using punched cards"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">Weaving Code: When the Loom Met the Algorithm</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n'); return false;">History of Computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGVyc29uYWwlMjBSZWZsZWN0aW9u'); return false;">Personal Reflection</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<p>A reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<div class="listing-date">
-Nov 27, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="ZG9ja2VyJTJDZGF0YS1lbmdpbmVlcmluZyUyQ2Rpc3RyaWJ1dGVkLWNvbXB1dGluZyUyQ3B5dGhvbg==" data-listing-date-sort="1762560000000" data-listing-file-modified-sort="1770116315429" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="927">
-<div class="thumbnail"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/00-docker-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">A Data Pipeline is a distributed system. Start Architecting It Like One</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZG9ja2Vy'); return false;">docker</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YS1lbmdpbmVlcmluZw=='); return false;">data-engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQtY29tcHV0aW5n'); return false;">distributed-computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHl0aG9u'); return false;">python</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<p>A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<div class="listing-date">
-Nov 8, 2025
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
-<p><a href="..">← Back to Home</a></p>
-
+<section id="analysis" class="level3">
+<h3 class="anchored" data-anchor-id="analysis">Analysis</h3>
+<p>The Unresolved Logical Plan is validated for Table/Column names and data types by looking up into the catalog. It also resolves the attributes and binds to the actual schema. It also verifies the functions that is actually available. After Analyzer Rules Execution, this steps yields an entity known as Resolved Logical Plan</p>
+</section>
+<section id="logical-optimization" class="level3">
+<h3 class="anchored" data-anchor-id="logical-optimization">Logical Optimization</h3>
+<p>The Resolved Logical Plan is then undergoes into a Rule-Based Optimization step. There are several rules that are applied here and some of the key optimization rules are</p>
+<ul>
+<li><strong>Predicate Pushdown</strong>: This rule prepones the filter operation as early as possible in the query execution plan. The idea is to reduce the volume of data that flows in the operation as early as possible.</li>
+<li><strong>Combine Filters</strong>: This rule combines similar filter operations into one.</li>
+<li><strong>Projection Pruning</strong>: This rule selects only the required columns that are implicated in the query.</li>
+<li><strong>Null Propagation</strong>: Optimize null checks</li>
+<li><strong>Constant Propagation</strong>: if there is any computation involves using a constant, it is simplified at the beginning and not executed repeatedly through out the query execution.</li>
+</ul>
+<p>The logical optimization steps yields Optimized Logical Plan</p>
+</section>
+<section id="physical-planning" class="level3">
+<h3 class="anchored" data-anchor-id="physical-planning">Physical Planning</h3>
+<p>The Optimized Logical Plan is then evaluated against a cost model for several alternative plans. The estimation of cost is projected based on</p>
+<ul>
+<li>Data size</li>
+<li>Complexity of the operation</li>
+<li>Network shuffle cost</li>
+<li>Resource requirements</li>
+</ul>
+<p>The least expensive model is selected in this step and it is called Selected Physical Plan.</p>
+</section>
+<section id="code-generation-and-execution" class="level3">
+<h3 class="anchored" data-anchor-id="code-generation-and-execution">Code Generation and execution</h3>
+<p>The selected physical plan is then taken as a base and an optimized code and the execution is then carried out as described in <a href="https://nbsmani.github.io/posts/2025-01-14-spark-architecture.html">Essentials of Spark Architecture</a>.</p>
+</section>
+<section id="visualizing-the-spark-optimization-steps" class="level3">
+<h3 class="anchored" data-anchor-id="visualizing-the-spark-optimization-steps">Visualizing the Spark Optimization Steps</h3>
+<p>The selected physical plans can be read using <code>df.explain() | df.explain("simple")</code> and all the steps of the optimization plan can be seen <code>df.explain("extended")</code>. The generated code can be seen using <code>df.explain("codegen")</code> and <code>df.explain("cost")</code> can print the logical plan and statistics if they are available.</p>
 
 
 </section>
