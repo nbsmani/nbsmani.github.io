@@ -1,0 +1,120 @@
+---
+layout: post
+title: "A guide to resolving DNS issues in Docker containers when accessing external APIs."
+date: 2026-02-03
+categories: [dataEngineering, docker, networking]
+description: "Description of DNS resolution issues in Docker and how to fix them using the --dns flag."
+execute:
+  eval: false
+---
+
+When developing containerized applications, sometimes the application need to fetch data from internet.Let's say developing an ETL pipline that tracks the price of gold, (which is currently very poplular :)). There are public API endpoints available and one should be able to pull the data in a python script.  For example, one can use the following script to pull data from a public API (luckily this one is free and not rate-limited).
+
+```python
+"""  
+PROJECT: Real-Time Commodity Price Ingestion  
+DESCRIPTION:  
+   This script performs an automated data ingestion process to fetch    
+   current market prices for a specific list of financial symbols.  
+  
+PROCESS FLOW:  
+   1. EXTRACT:    
+      - Loads a target list of symbols (e.g., XAU, XAG) from a local JSON file.  
+      - Iteratively queries the Gold-API for each symbol's real-time data.  
+   2. TRANSFORM:  
+      - Handles API connection errors by assigning "NA" placeholders.  
+      - Generates a dynamic timestamp for the filename, prioritizing the    
+        API's 'updatedAt' field, falling back to system time if unavailable.  
+      - Normalizes the nested JSON responses into a tabular Pandas DataFrame.  
+   3. LOAD:  
+      - Ensures a local 'landing_zone' directory exists.  
+      - Saves the structured data into a CSV file for downstream analysis.  
+  
+OUTPUT:    
+   A CSV file located in ./data/landing_zone/ with the naming convention:  
+   priceYYYY-MM-DD-HH-MM-SS.csv  
+Author: Balasubramaniam Namasivayam  
+Date: 15/06/2025  
+"""  
+  
+# Import necessary libraries  
+import os  
+from datetime import datetime  
+import requests  
+import json  
+import pandas as pd  
+  
+# Define API endpoint  
+url = 'https://api.gold-api.com/price/'  
+symbol_file_path = "./data/symbols.json"  
+# Load symbols from local JSON file. If the symbols file is not available, it can be created by running `./scripts/get-symbols.py`  
+if symbol_file_path:  
+   with open("./data/symbols.json", 'r') as f:  
+       symbols_data = json.load(f)  
+   symbols_data = pd.DataFrame(symbols_data)  
+   symbols = symbols_data['symbol'].tolist()  
+  
+else:  
+   print("Symbol file is not available. Please run `./scripts/get-symbols.py` to create the symbols file.")  
+  
+# Set up headers for the API request  
+headers = {  
+   "Content-Type": "application/json"}  
+  
+# Initialize dictionary to hold current prices  
+current_price ={}  
+data = None  
+  
+# Fetch current price for each symbol  
+for symbol in symbols:  
+   url_symbol = f"{url}{symbol}"  
+   response = requests.get(url_symbol, headers=headers)  
+   if response.status_code == 200:  
+       data = response.json()  
+       current_price[symbol] = data  
+   else:  
+       print(f"Error fetching price for {symbol}: {response.status_code}")  
+       current_price[symbol] = "NA"  
+  
+# Validate timestamp  
+# This uses the timestamp from the last successful API call in the loop  
+if data and data['updatedAt']:  
+   latest_time = data["updatedAt"].replace(":", "-")  
+else:  
+   # Fallback to system time if API timestamp is unavailable  
+   latest_time = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")  
+  
+#Ensure landing zone directory exists before saving the output file  
+os.makedirs('./data/landing_zone/', exist_ok=True)  
+output_file = f'./data/landing_zone/price{latest_time}.csv'  
+  
+# Convert the current price dictionary to a DataFrame and load as CSV  
+current_price = pd.DataFrame.from_dict(current_price, orient='index')  
+current_price.to_csv(output_file, sep=',', index=False)  
+  
+# Print confirmation message for logging  
+print(f"Price data saved to {output_file}")
+```
+
+
+This script works perfectly in a local machine and saves the clean data into the destination of the pipeline. Great! 
+
+But challenge arises when you want to containerize your application. Yes using `docker-compose.yml`, one can create a bridge network and you can orchestrate the communication between containers. I have previously written about it [here](https://nbsmani.github.io/posts/2025-11-09-docker-data-pipeline.html) . But you might want to verify the image before you orchestrate and  when you build the app image using `Dockerfile`,  with the command `docker build -t <your-img-tag> .`, you will get the image be built without any problem. But when you run the app locally to verify it works as intended, you will get `ConnectionError` because the container is isolated from your local network. 
+
+So how do one solve this problem?
+
+This is where `--dns` flag comes into play. you can simply instruct the image to resolve the ipaddress to a public server (such as google's dns service)
+That single flag, `--dns 8.8.8.8`, instructs the container to use Google's public DNS server for resolving hostnames.
+
+## Why Does This Happen?
+
+### The Two-Phase Network Problem
+
+1. **Build Phase**: During `docker build`, Docker uses your host's DNS configuration. That's why `pip install` (which needs to resolve `pypi.org`) works fine.
+    
+2. **Run Phase**: When `docker run` executes, the container starts with Docker's default networking setup, which may not include functional DNS servers. Your script tries to resolve `api.gold-api.com`, fails, and throws a `ConnectionError`.
+    
+
+### Understanding Docker's Default DNS Behavior
+
+By default, Docker containers use the host's DNS settings. However, in some configurations (especially on Linux without systemd-resolved or with certain network managers), this inheritance breaks down. The container ends up with an empty `/etc/resolv.conf` or one pointing to a non-existent DNS server.
