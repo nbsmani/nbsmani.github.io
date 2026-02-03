@@ -2,7 +2,7 @@
 layout: post
 title: "A guide to resolving DNS issues in Docker containers when accessing external APIs."
 date: 2026-02-03
-categories: [dataEngineering, docker, networking]
+categories: [data engineering, docker, networking]
 description: "Description of DNS resolution issues in Docker and how to fix them using the --dns flag."
 execute:
   eval: false
