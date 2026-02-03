@@ -2,6 +2,7 @@
   {
     "listing": "/posts/index.html",
     "items": [
+      "/posts/2026-02-03-docker-dns-resolution.html",
       "/posts/2026-01-26-spark-query-optimization.html",
       "/posts/2026-01-14-spark-architecture.html",
       "/posts/2026-01-05-spark.html",
