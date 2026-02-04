@@ -304,6 +304,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <p>This script works perfectly in a local machine and saves the clean data into the destination of the pipeline. Great!</p>
 <p>But challenge arises when you want to containerize your application. Yes using <code>docker-compose.yml</code>, one can create a bridge network and you can orchestrate the communication between containers. I have previously written about it <a href="https://nbsmani.github.io/posts/2025-11-09-docker-data-pipeline.html">here</a> . But you might want to verify the image before you orchestrate and when you build the app image using <code>Dockerfile</code>, with the command <code>docker build -t &lt;your-img-tag&gt; .</code>, you will get the image be built without any problem. But when you run the app locally to verify it works as intended, you will get <code>ConnectionError</code> because the container is isolated from your local network.</p>
 <p>So how do one solve this problem?</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/06-docker-dns-api-00.png" class="img-fluid figure-img"></p>
+<figcaption>docker-connection-error and resolution</figcaption>
+</figure>
+</div>
 <p>This is where <code>--dns</code> flag comes into play. you can simply instruct the image to resolve the ipaddress to a public server (such as google’s dns service) That single flag,&nbsp;<code>--dns 8.8.8.8</code>, instructs the container to use Google’s public DNS server for resolving hostnames.</p>
 <section id="why-does-this-happen" class="level2">
 <h2 class="anchored" data-anchor-id="why-does-this-happen">Why Does This Happen?</h2>
