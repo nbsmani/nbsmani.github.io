@@ -171,6 +171,7 @@ p {
 }
 
 .navbar-brand img {
+    height: 40px !important;
     width: auto !important;
     max-height: 40px !important;
 }
