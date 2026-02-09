@@ -3,9 +3,9 @@ project:
 
 website:
   title: "Balasubramaniam Namasivayam"
-  favicon: assets/img/logo/yingyang.svg
+  favicon: assets/img/logo/yinyang.svg
   navbar:
-    logo: assets/img/logo/yingyang.svg
+    logo: assets/img/logo/yinyang.svg
     left:
       - href: index.qmd
         text: Home
