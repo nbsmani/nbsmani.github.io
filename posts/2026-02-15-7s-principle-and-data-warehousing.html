@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-01-05">
-<meta name="description" content="A brief summary of Apache Spark and its core features.">
+<meta name="dcterms.date" content="2026-02-15">
+<meta name="description" content="A reflection on how the Japanese concept of 7S used in factories could be related to modern Data warehousing principles.">
 
-<title>Essentials of Apache Spark – Balasubramaniam Namasivayam</title>
+<title>Japanese Philosophy of Housekeeping and Data Warehousing: A Unique Perspective – Balasubramaniam Namasivayam</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -141,16 +141,12 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#apache-spark" id="toc-apache-spark" class="nav-link active" data-scroll-target="#apache-spark">Apache Spark</a>
-  <ul class="collapse">
-  <li><a href="#in-memory-computing" id="toc-in-memory-computing" class="nav-link" data-scroll-target="#in-memory-computing">In-memory computing:</a></li>
-  <li><a href="#abstractions-in-spark" id="toc-abstractions-in-spark" class="nav-link" data-scroll-target="#abstractions-in-spark">Abstractions in Spark</a></li>
-  <li><a href="#data-partitioning" id="toc-data-partitioning" class="nav-link" data-scroll-target="#data-partitioning">Data Partitioning:</a></li>
-  <li><a href="#fault-tolerant-computing" id="toc-fault-tolerant-computing" class="nav-link" data-scroll-target="#fault-tolerant-computing">Fault-tolerant computing:</a></li>
-  <li><a href="#spark-has-an-unified-engine" id="toc-spark-has-an-unified-engine" class="nav-link" data-scroll-target="#spark-has-an-unified-engine">Spark has an Unified Engine</a></li>
-  <li><a href="#spark-is-polyglot" id="toc-spark-is-polyglot" class="nav-link" data-scroll-target="#spark-is-polyglot">Spark is Polyglot</a></li>
-  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
-  </ul></li>
+  <li><a href="#seiketsu---clean-to-achieve-consistency" id="toc-seiketsu---clean-to-achieve-consistency" class="nav-link active" data-scroll-target="#seiketsu---clean-to-achieve-consistency">Seiketsu - Clean to achieve consistency</a></li>
+  <li><a href="#seiri-and-seiton---orderliness" id="toc-seiri-and-seiton---orderliness" class="nav-link" data-scroll-target="#seiri-and-seiton---orderliness">Seiri and Seiton - Orderliness</a></li>
+  <li><a href="#seiso---stratification" id="toc-seiso---stratification" class="nav-link" data-scroll-target="#seiso---stratification">Seiso - Stratification</a></li>
+  <li><a href="#shitsuke---training-and-team-culture" id="toc-shitsuke---training-and-team-culture" class="nav-link" data-scroll-target="#shitsuke---training-and-team-culture">Shitsuke - Training and Team culture</a></li>
+  <li><a href="#shikkari---standardization" id="toc-shikkari---standardization" class="nav-link" data-scroll-target="#shikkari---standardization">Shikkari - Standardization</a></li>
+  <li><a href="#shitsukoku---build-for-persistence" id="toc-shitsukoku---build-for-persistence" class="nav-link" data-scroll-target="#shitsukoku---build-for-persistence">Shitsukoku - Build for persistence</a></li>
   </ul>
 </nav>
     </div>
@@ -159,17 +155,17 @@ ul.task-list li input[type="checkbox"] {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Essentials of Apache Spark</h1>
+<h1 class="title">Japanese Philosophy of Housekeeping and Data Warehousing: A Unique Perspective</h1>
   <div class="quarto-categories">
-    <div class="quarto-category">distributed computing</div>
     <div class="quarto-category">data engineering</div>
-    <div class="quarto-category">apache spark</div>
+    <div class="quarto-category">7s</div>
+    <div class="quarto-category">Personal reflection</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    A brief summary of Apache Spark and its core features.
+    A reflection on how the Japanese concept of 7S used in factories could be related to modern Data warehousing principles.
   </div>
 </div>
 
@@ -180,7 +176,7 @@ ul.task-list li input[type="checkbox"] {
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">January 5, 2026</p>
+      <p class="date">February 15, 2026</p>
     </div>
   </div>
   
@@ -192,60 +188,36 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Traditionally, processing big data was challenging because the sheer size of the data that exceeds far greater than the available compute resources. To handle such big data, Hadoop had “Hadoop Distributed File System (HDFS)” framework and batch processing through the <code>MapReduce</code> function. These innovations enabled distributed computing to run on commodity hardware. While this offered many advantages such as partitioned data, distributed processing etc, significant challenges remained in terms of scalability and speed since it is based on disc. This is because this way of distributed processing resulted in exponential read write cycles for each intermediate steps.</p>
-<p>Spark was developed to address these important bottlenecks in terms of speed and efficiency by adopting “in-memory computing”. This drasticially improved speed and efficiency of big data processing. There were many additional advantages in Spark which is detailed below.</p>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../assets/img/03-Spark-for-bdp-00.jpg" class="img-fluid figure-img"></p>
-<figcaption>Spark for Big Data processing</figcaption>
-</figure>
-</div>
-<section id="apache-spark" class="level2">
-<h2 class="anchored" data-anchor-id="apache-spark">Apache Spark</h2>
-<p>Apache Spark was developed by Matei Zaharia of University of California, Berkeley in 2009 and was donated to Apache Software Foundation in 2013.</p>
-<p>Spark is a distributed computing framework that addressed bottlenecks in the traditional Hadoop based big data tools. Spark achieves performance improvement on the following fronts:</p>
-<ul>
-<li>In-memory computing</li>
-<li>Partitioning</li>
-<li>Fault-tolerant computing</li>
-<li>Unified engine for big data ecosystem</li>
-</ul>
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="../assets/img/03-Apache_Spark_logo-01.png" class="img-fluid figure-img"></p>
-<figcaption>Apache Spark</figcaption>
-</figure>
-</div>
-<section id="in-memory-computing" class="level3">
-<h3 class="anchored" data-anchor-id="in-memory-computing">In-memory computing:</h3>
-<p>Spark works via in-memory computing that retains the data cached in the memory. This alone can yield 100-1000x speedups. Imagine a computation with many steps. At each step, the data must be read from the disk, loaded into memory (RAM), processed, intermediate results are written back. This operation must be repeated until the operation is completed. Clearly, the bottleneck is the repeated read, write cycle of intermediary data to hard disk. Spark eliminates most of this repetitive I/O on the disk by keeping the intermediate results in memory, dramatically accelerating performance. Spark intelligently manages the memory by keeping maximum of the partition data in memory (RAM). When the partition data exceeds the allocated in-memory, spark spills over the least frequently used partitions to the physical memory (disk) and quickly read back if and when the partition is needed.</p>
+<p>Back when I was working as a production engineer in India, the company had implemented the concept of “7S-System of House keeping”. The 7S is an extension of the Japanese philosophy of 5S. The 7S are: - <strong>Seiri</strong> - Sort the items - <strong>Seiton</strong> - A place for every item and every item in its place - <strong>Seiso</strong> - Remove unwanted items and arrange the necessary items in a ordely way - <strong>Seiketsu</strong> - Consistently apply the cleanling practice - <strong>Shitsuke</strong> - Train so that the sytem is maintained without explicit instructions - <strong>Shikkari</strong> - Stabilize / Standardize - <strong>Shitsukoku</strong> - Persistently maintain the system</p>
+<p>Now working in the domain of data, I often think about this philosophy and how intertwined it is with the data warehousing. Although the factory warehouse and Data warehouse different purposes, the fundamental actions are the same. A factory warehouse - receives inventory items from different providers, - inspects it for correctness, - ensures that no components are missing, - sorts and standardizes them, - stores them in a specific way and place for serving the end users. A Data warehouse follows the same logic. It receives incoming data either in batches or in real-time streams, the incoming data is handled in the staging area, for their correctness, missing values and normalization. Once they are compliant with the specification, the facts and dimensions are modelled and stored in appropriate tables in the database for the end users to consume.</p>
+<p>Here is a breakdown of how the 7S philosophy directly applies to a modern data warehouse: While there is an order for the 7S principles, they are not necessarily sequential. That is to say, it does not follow the same order as the data warehousung process. However, the principles are all relevant and can be applied at different stages of the data warehousing process.</p>
+<section id="seiketsu---clean-to-achieve-consistency" class="level2">
+<h2 class="anchored" data-anchor-id="seiketsu---clean-to-achieve-consistency">Seiketsu - Clean to achieve consistency</h2>
+<p>The Seiketsu principle emphasizes the importance of cleanliness and organization. In the context of data warehousing, this can be interpreted as the need for data cleansing and data quality management. Just like in a factory warehouse, where dirty or damaged items can cause problems, in a data warehouse, dirty or inaccurate data can cause problems for end users. This could be achieved through the use of data cleansing techniques such as data profiling, data validation, and data transformation, which help to ensure that the data is accurate and consistent. Additionally, it also emphasizes the importance of monitoring and maintaining the quality of the data over time, which helps to ensure that the data remains accurate and useful for end users.</p>
 </section>
-<section id="abstractions-in-spark" class="level3">
-<h3 class="anchored" data-anchor-id="abstractions-in-spark">Abstractions in Spark</h3>
-<p>Spark developed its core abstraction called Resilient Distributed Datasets (RDD) in the 2010s followed by the now popular Dataset and DataFrame which are the latest (introduced 2015-2016) higher level API implementations of Spark. DataFrames and Datasets are the preferred APIs today for their optimizations and ease of use. The RDDs still remain functional and used for specialized use cases.</p>
+<section id="seiri-and-seiton---orderliness" class="level2">
+<h2 class="anchored" data-anchor-id="seiri-and-seiton---orderliness">Seiri and Seiton - Orderliness</h2>
+<p>The Seiri and Seiton principles are not dramatically different from each other. They both emphasizes the importance of organization and order. In the context of data warehousing, this can be interpreted as the need for a well-designed data model and schema. Just like in a factory warehouse, where each item has a specific place, in a data warehouse, each piece of data should have a specific place in the database/ schema or even in table. This could be achieved through the use of dimensional modeling techniques such as star schema or snowflake schema, which help to organize the data in a way that is easy to understand and query. Additionally, it also emphasizes the importance of metadata management, which helps to ensure that the data is properly documented and can be easily understood by end users.</p>
 </section>
-<section id="data-partitioning" class="level3">
-<h3 class="anchored" data-anchor-id="data-partitioning">Data Partitioning:</h3>
-<p>Spark partitions the data either by a variable in the data or arbitrarily by equal size. Partitioning by a variable of the data frame can be created using <code>partitionby()</code> method and arbitrary partitions can be created using <code>repartition()</code> method. Proper partitioning is critical for parallelism and optimized performance.</p>
+<section id="seiso---stratification" class="level2">
+<h2 class="anchored" data-anchor-id="seiso---stratification">Seiso - Stratification</h2>
+<p>The Seiso principle also emphasizes the importance of stratification, which is the process of organizing items into different layers or levels. In the context of data warehousing, this can be interpreted as the need for a well-designed data architecture that separates different types of data into different layers. For example, a common architecture for a data warehouse is to have a staging layer, where raw data is stored, a presentation layer, where cleaned and transformed data is stored, and a consumption layer, where data is made available for end users. It can also be compared to the popular medallion architecture, which separates data into bronze, silver, and gold layers.</p>
+<p>This separation of layers helps to ensure that the data is properly organized and can be easily accessed by end users. While the Seiri and Seiton principles also emphasize the importance of organization, the Seiso principle specifically emphasizes the importance of stratification, that stratify the process with the operation layers in terms of architecture which is a crucial aspect of data warehousing.</p>
 </section>
-<section id="fault-tolerant-computing" class="level3">
-<h3 class="anchored" data-anchor-id="fault-tolerant-computing">Fault-tolerant computing:</h3>
-<p>Spark is fault tolerant since it can rapidly recreate the partition data on any failed nodes. Sparks tracks the lineage of the partition from the original data. If a node fails, spark rebuilds the lost data without ever stopping or restarting the process. This enabled horizontal scaling to handle petabytes of data reliably.</p>
+<section id="shitsuke---training-and-team-culture" class="level2">
+<h2 class="anchored" data-anchor-id="shitsuke---training-and-team-culture">Shitsuke - Training and Team culture</h2>
+<p>The Shitsuke principle emphasizes the importance of training and team culture. In the context of data warehousing, this can be interpreted as the need for a well-trained team that is familiar with the data warehousing process and the tools and technologies used to build and maintain the data warehouse. This could be achieved through regular training sessions, workshops, and knowledge sharing among team members. Additionally, it also emphasizes the importance of fostering a culture of collaboration and continuous learning within the team, which helps to ensure that the team is able to adapt to changes in technology and business requirements over time.</p>
 </section>
-<section id="spark-has-an-unified-engine" class="level3">
-<h3 class="anchored" data-anchor-id="spark-has-an-unified-engine">Spark has an Unified Engine</h3>
-<p>Traditional Hadoop based solutions relied on different independent frameworks for specific processing of the data. For example for bigdata processing, there was MapReduce, for Stream Processing there was Strom or Samza, for SQL queries there was Hive or Impala. These resulted in a data silos, complex architectures and expensive data overheads. This is because the engineers had to master many tools and integrate into their system. Spark has the core engine and has several higher level APIs such as Spark SQL, Structured Streaming, Spark MLlib and Spark Graphx for querying, real-time data processing, machine learning and graph analytics all unified in the Spark framework, making it a powerful modern data stack.</p>
+<section id="shikkari---standardization" class="level2">
+<h2 class="anchored" data-anchor-id="shikkari---standardization">Shikkari - Standardization</h2>
+<p>Shikkari is the principle that emphasizes the importance of standardization. In the context of data warehousing, this can be interpreted as the need for a well-defined data warehousing process, strict adherence to defined data contracts. It is important to have a clearly defined schema, data quality rules, Service Level Agreements (SLAs) and data governance policies in place to ensure that the data is accurate and consistent.</p>
 </section>
-<section id="spark-is-polyglot" class="level3">
-<h3 class="anchored" data-anchor-id="spark-is-polyglot">Spark is Polyglot</h3>
-<p>Spark’s core is written in Scala and APIs for Python (pyspark), Java, R (sparklyr) and SQL are available making it a powerful language across different data and statistical stacks. Spark documentation describes near identical performance across these languages.</p>
-</section>
-<section id="conclusion" class="level3">
-<h3 class="anchored" data-anchor-id="conclusion">Conclusion</h3>
-<p>Apache Spark revolutionized big data processing by providing a unified, in-memory computing framework that addressed the limitations of traditional Hadoop ecosystems. By combining in-memory processing, intelligent partitioning, fault tolerance, and a polyglot API approach, Spark delivers dramatic performance improvements while simplifying complex data architectures. Its ability to handle diverse workloads from batch processing and real-time streaming to machine learning and graph analytics makes it a powerful engine for today’s big data challanges. All these operations are efficiently performed through a single integrated engine makes it a cornerstone of modern data platforms. As data volumes continue to grow and processing demands become more complex, Spark’s balanced approach of performance, reliability, and developer accessibility ensures its enduring relevance in the data engineering landscape.</p>
+<section id="shitsukoku---build-for-persistence" class="level2">
+<h2 class="anchored" data-anchor-id="shitsukoku---build-for-persistence">Shitsukoku - Build for persistence</h2>
+<p>This last principle advocates that the system must be built for durability and persistence. In the context of data warehousing, this can be interpreted as the need for a well-designed data warehousing architecture that is scalable, reliable, and maintainable. Notably, the data engineers must build the data warehouses that ensures resillience by anticipating potential issues and implementing appropriate measures to mitigate them. For example, this could include a systematic approach to data backup and recovery, version control for data and code,and proactive technical debt management.</p>
+<p>By adopting a datawarehouse design based on the 7S philosopy, data engineers can build, operate and maintain a sustainable, high-quality and well-governed data warehouse that serves the needs of the business and end users effectively. The 7S principles provide a holistic framework for thinking about the various aspects of data warehousing, from data quality and organization to team culture and architecture.</p>
 
 
-</section>
 </section>
 
 </main> <!-- /main -->
