@@ -1,8 +1,8 @@
 ---
 layout: post
-title: "Japanese Philosophy of Housekeeping and Data Warehousing: A Unique Perspective"
+title: " Data Warehousing and Japanese Philosophy of Housekeeping: A Unique Perspective"
 date: 2026-02-15
-categories: [data engineering,7s, Personal reflection]
+categories: [data engineering,7s, Personal Reflection]
 description: "A reflection on how the Japanese concept of 7S used in factories could be related to modern Data warehousing principles."
 execute:
   eval: false
@@ -55,6 +55,10 @@ Shikkari is the principle that emphasizes the importance of standardization. In 
 ## Shitsukoku - Build for persistence 
 
 This last principle advocates that the system must be built for durability and persistence. In the context of data warehousing, this can be interpreted as the need for a well-designed data warehousing architecture that is scalable, reliable, and maintainable. Notably, the data engineers must build the data warehouses that ensures resillience by anticipating potential issues and implementing appropriate measures to mitigate them. For example, this could include a systematic approach to data backup and recovery, version control for data and code,and proactive technical debt management.
+
+![AI summarized infographic of the 7S principles applied to data warehousing](../assets/img/07-DW-7S-00.png)
+
+
 
 ## Concluding thoughts
 
