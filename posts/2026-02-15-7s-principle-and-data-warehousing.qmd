@@ -8,18 +8,21 @@ execute:
   eval: false
 ---
 
-Back when I was working as a production engineer in India, the company had implemented the concept of "7S-System of House keeping". The 7S is an extension of the Japanese philosophy of 5S. 
-The 7S are:
+Back when I was working as a production engineer in India, the company had implemented the concept of "7S-System of House Keeping". The 7S is an extension of the Japanese philosophy of 5S. 
+
+The components of 7S are:
 
 - **Seiri** - Sort the items
 - **Seiton** -  A place for every item and every item in its place
-- **Seiso** -  Remove unwanted items and arrange the necessary items in a ordely way
+- **Seiso** -  Remove unwanted items and arrange the necessary items in a orderly way
 - **Seiketsu** - Consistently apply the cleanling practice
-- **Shitsuke** - Train so that the sytem is maintained without explicit instructions
+- **Shitsuke** - Train so that the system is maintained without explicit instructions
 - **Shikkari** - Stabilize / Standardize 
 - **Shitsukoku** - Persistently maintain the system
 
-Now working in the domain of data, I often think about this philosophy and how intertwined it is with the data warehousing.  Although the factory warehouse and Data warehouse different purposes, the fundamental actions are the same. A factory warehouse 
+Now working in the domain of data, I often think about this philosophy and how intertwined it is with the data warehousing.  Although the factory warehouse and Data warehouse different purposes, the fundamental actions are the same. 
+
+For example, a factory warehouse 
 
 - receives inventory items from different providers,
 - inspects it for correctness,
@@ -30,6 +33,7 @@ Now working in the domain of data, I often think about this philosophy and how i
 A Data warehouse follows the same logic. It receives incoming data either in batches or in real-time streams,  the incoming data is handled in the staging area, for their correctness, missing values and normalization. Once they are compliant with the specification, the facts and dimensions are modelled and stored in appropriate tables in the database for the end users to consume. 
 
 Here is a breakdown of how the 7S philosophy directly applies to a modern data warehouse:
+
 While there is an order for the 7S principles, they are not necessarily sequential. That is to say, it does not follow the same order as the data warehousung process. However, the principles are all relevant and can be applied at different stages of the data warehousing process.
 
 ## Seiketsu - Clean to achieve consistency
