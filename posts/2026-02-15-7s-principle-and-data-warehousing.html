@@ -189,17 +189,19 @@ ul.task-list li input[type="checkbox"] {
 </header>
 
 
-<p>Back when I was working as a production engineer in India, the company had implemented the concept of “7S-System of House keeping”. The 7S is an extension of the Japanese philosophy of 5S. The 7S are:</p>
+<p>Back when I was working as a production engineer in India, the company had implemented the concept of “7S-System of House Keeping”. The 7S is an extension of the Japanese philosophy of 5S.</p>
+<p>The components of 7S are:</p>
 <ul>
 <li><strong>Seiri</strong> - Sort the items</li>
 <li><strong>Seiton</strong> - A place for every item and every item in its place</li>
-<li><strong>Seiso</strong> - Remove unwanted items and arrange the necessary items in a ordely way</li>
+<li><strong>Seiso</strong> - Remove unwanted items and arrange the necessary items in a orderly way</li>
 <li><strong>Seiketsu</strong> - Consistently apply the cleanling practice</li>
-<li><strong>Shitsuke</strong> - Train so that the sytem is maintained without explicit instructions</li>
+<li><strong>Shitsuke</strong> - Train so that the system is maintained without explicit instructions</li>
 <li><strong>Shikkari</strong> - Stabilize / Standardize</li>
 <li><strong>Shitsukoku</strong> - Persistently maintain the system</li>
 </ul>
-<p>Now working in the domain of data, I often think about this philosophy and how intertwined it is with the data warehousing. Although the factory warehouse and Data warehouse different purposes, the fundamental actions are the same. A factory warehouse</p>
+<p>Now working in the domain of data, I often think about this philosophy and how intertwined it is with the data warehousing. Although the factory warehouse and Data warehouse different purposes, the fundamental actions are the same.</p>
+<p>For example, a factory warehouse</p>
 <ul>
 <li>receives inventory items from different providers,</li>
 <li>inspects it for correctness,</li>
@@ -208,7 +210,8 @@ ul.task-list li input[type="checkbox"] {
 <li>stores them in a specific way and place for serving the end users.</li>
 </ul>
 <p>A Data warehouse follows the same logic. It receives incoming data either in batches or in real-time streams, the incoming data is handled in the staging area, for their correctness, missing values and normalization. Once they are compliant with the specification, the facts and dimensions are modelled and stored in appropriate tables in the database for the end users to consume.</p>
-<p>Here is a breakdown of how the 7S philosophy directly applies to a modern data warehouse: While there is an order for the 7S principles, they are not necessarily sequential. That is to say, it does not follow the same order as the data warehousung process. However, the principles are all relevant and can be applied at different stages of the data warehousing process.</p>
+<p>Here is a breakdown of how the 7S philosophy directly applies to a modern data warehouse:</p>
+<p>While there is an order for the 7S principles, they are not necessarily sequential. That is to say, it does not follow the same order as the data warehousung process. However, the principles are all relevant and can be applied at different stages of the data warehousing process.</p>
 <section id="seiketsu---clean-to-achieve-consistency" class="level2">
 <h2 class="anchored" data-anchor-id="seiketsu---clean-to-achieve-consistency">Seiketsu - Clean to achieve consistency</h2>
 <p>The Seiketsu principle emphasizes the importance of cleanliness and organization. In the context of data warehousing, this can be interpreted as the need for data cleansing and data quality management. Just like in a factory warehouse, where dirty or damaged items can cause problems, in a data warehouse, dirty or inaccurate data can cause problems for end users. This could be achieved through the use of data cleansing techniques such as data profiling, data validation, and data transformation, which help to ensure that the data is accurate and consistent. Additionally, it also emphasizes the importance of monitoring and maintaining the quality of the data over time, which helps to ensure that the data remains accurate and useful for end users.</p>
