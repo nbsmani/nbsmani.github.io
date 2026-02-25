@@ -13,19 +13,24 @@ execute:
 Dataframes in Spark are structured and labelled data in two dimensions like a spreadsheet or table. Spark dataframes are built over Resilient Distributed Dataset (RDD)  and therefore stored in several partitions. 
 
 Spark Documentation describes Dataframe as
+
 > "A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood."
 
 ## Features of DataFrame
 
 Over traditional dataframes, Spark DataFrame offers the following features.
 
--Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe.
+- Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe.
 - Lazy Evaluation: Spark dataframes are lazily evaluated. When a transformation is applied over a dataframe, an optimized execution plan is created and the execution is carried out only when an action is called.
 - Optimized: Spark dataframe is a high level API of RDD and the executions are optimized (logical and physical). The detailed optimization can be read in this [article](https://nbsmani.github.io/posts/2026-01-26-spark-query-optimization.html) .
 - Fault Tolerant: Since the spark DataFrame are built over the RDD structure, they are inherently fault tolerant. When a node or partition fails, the replacement partition is recreated by tracking the lineage without restarting the process from scratch or stopping the process.
 - Schema Aware: Spark dataframes hold defined datatypes and constraints for each column of the dataframe. It offers schema flexibility by supporting schema evolution and dynamic typing. 
 
 One notable difference between a pandas dataframe and a spark DataFrame is that `pd.DataFrame` is index aware where as the records in the spark DataFrame are not indexed but stored as partitions, this is known as partition aware property. 
+
+![AI summarized infographic of the features and operations of Spark DataFrames](../assets/img/08-spark-dataframe-00.png)
+
+
 
 ## Creating a Dataframe
 
@@ -112,8 +117,10 @@ df = spark.sql("SELECT * FROM sales" )
 ## Operations on Spark DataFrames
 
 RDDs (thus Spark DataFrames) supports the following two types of operations
+
 - Transformations
 - Actions
+
 ### Transformations
 
 Transformations create a new dataset from existing one  In principle, the transformations are lazily evaluated. Once a transformation is called, a Directed Acyclic Graph (DAG) is built but it is not executed until an action is called.
@@ -121,6 +128,7 @@ The following are some examples of transformations
 `map()`, `filter()`, `sample()`,`distinct()` `union()` `join()`, `repartition()`
 
 ### Actions
+
 Action returns the evaluated result of the computation on the dataset to the driver program and to the user.
 The following are some examples of actions `count()`,`first()`,`collect()`, `show()`
 
@@ -141,6 +149,8 @@ df_with_tax = df.withColumn("tax", df.price * 0.1)
 # Aggregations
 df.groupBy("department").avg("age").show()
 ```
+
+
 
 ## Conclusion
 Spark DataFrames are a powerful and flexible way to work with structured data in Apache Spark. They provide a high-level API for working with data, while also offering the performance and scalability benefits of Spark's underlying RDD structure. By understanding how to create and manipulate DataFrames, one can unlock the full potential of Spark for the  data processing needs.
