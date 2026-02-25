@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Essentials of Spark Architecture"
+title: "Query Optimization in Apache Spark: A Deep Dive"
 date: 2026-01-26
 categories: [Spark, data engineering, distributed computing, pyspark, sparkSQL, spark optimization]
 description: "Essentials of Spark Query Optimization Process."
