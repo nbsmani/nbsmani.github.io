@@ -186,6 +186,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   </ul></li>
   <li><a href="#operations-on-spark-dataframes" id="toc-operations-on-spark-dataframes" class="nav-link" data-scroll-target="#operations-on-spark-dataframes">Operations on Spark DataFrames</a>
   <ul class="collapse">
+  <li><a href="#transformations" id="toc-transformations" class="nav-link" data-scroll-target="#transformations">Transformations</a></li>
   <li><a href="#actions" id="toc-actions" class="nav-link" data-scroll-target="#actions">Actions</a></li>
   </ul></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
@@ -233,13 +234,28 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="what-is-a-spark-dataframe" class="level2">
 <h2 class="anchored" data-anchor-id="what-is-a-spark-dataframe">What is a Spark Dataframe?</h2>
 <p>Dataframes in Spark are structured and labelled data in two dimensions like a spreadsheet or table. Spark dataframes are built over Resilient Distributed Dataset (RDD) and therefore stored in several partitions.</p>
-<p>Spark Documentation describes Dataframe as &gt; “A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood.”</p>
+<p>Spark Documentation describes Dataframe as</p>
+<blockquote class="blockquote">
+<p>“A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood.”</p>
+</blockquote>
 </section>
 <section id="features-of-dataframe" class="level2">
 <h2 class="anchored" data-anchor-id="features-of-dataframe">Features of DataFrame</h2>
 <p>Over traditional dataframes, Spark DataFrame offers the following features.</p>
-<p>-Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe. - Lazy Evaluation: Spark dataframes are lazily evaluated. When a transformation is applied over a dataframe, an optimized execution plan is created and the execution is carried out only when an action is called. - Optimized: Spark dataframe is a high level API of RDD and the executions are optimized (logical and physical). The detailed optimization can be read in this <a href="https://nbsmani.github.io/posts/2026-01-26-spark-query-optimization.html">article</a> . - Fault Tolerant: Since the spark DataFrame are built over the RDD structure, they are inherently fault tolerant. When a node or partition fails, the replacement partition is recreated by tracking the lineage without restarting the process from scratch or stopping the process. - Schema Aware: Spark dataframes hold defined datatypes and constraints for each column of the dataframe. It offers schema flexibility by supporting schema evolution and dynamic typing.</p>
+<ul>
+<li>Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe.</li>
+<li>Lazy Evaluation: Spark dataframes are lazily evaluated. When a transformation is applied over a dataframe, an optimized execution plan is created and the execution is carried out only when an action is called.</li>
+<li>Optimized: Spark dataframe is a high level API of RDD and the executions are optimized (logical and physical). The detailed optimization can be read in this <a href="https://nbsmani.github.io/posts/2026-01-26-spark-query-optimization.html">article</a> .</li>
+<li>Fault Tolerant: Since the spark DataFrame are built over the RDD structure, they are inherently fault tolerant. When a node or partition fails, the replacement partition is recreated by tracking the lineage without restarting the process from scratch or stopping the process.</li>
+<li>Schema Aware: Spark dataframes hold defined datatypes and constraints for each column of the dataframe. It offers schema flexibility by supporting schema evolution and dynamic typing.</li>
+</ul>
 <p>One notable difference between a pandas dataframe and a spark DataFrame is that <code>pd.DataFrame</code> is index aware where as the records in the spark DataFrame are not indexed but stored as partitions, this is known as partition aware property.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/08-spark-dataframe-00.png" class="img-fluid figure-img"></p>
+<figcaption>AI summarized infographic of the features and operations of Spark DataFrames</figcaption>
+</figure>
+</div>
 </section>
 <section id="creating-a-dataframe" class="level2">
 <h2 class="anchored" data-anchor-id="creating-a-dataframe">Creating a Dataframe</h2>
@@ -315,8 +331,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="operations-on-spark-dataframes" class="level2">
 <h2 class="anchored" data-anchor-id="operations-on-spark-dataframes">Operations on Spark DataFrames</h2>
-<p>RDDs (thus Spark DataFrames) supports the following two types of operations - Transformations - Actions ### Transformations</p>
+<p>RDDs (thus Spark DataFrames) supports the following two types of operations</p>
+<ul>
+<li>Transformations</li>
+<li>Actions</li>
+</ul>
+<section id="transformations" class="level3">
+<h3 class="anchored" data-anchor-id="transformations">Transformations</h3>
 <p>Transformations create a new dataset from existing one In principle, the transformations are lazily evaluated. Once a transformation is called, a Directed Acyclic Graph (DAG) is built but it is not executed until an action is called. The following are some examples of transformations <code>map()</code>, <code>filter()</code>, <code>sample()</code>,<code>distinct()</code> <code>union()</code> <code>join()</code>, <code>repartition()</code></p>
+</section>
 <section id="actions" class="level3">
 <h3 class="anchored" data-anchor-id="actions">Actions</h3>
 <p>Action returns the evaluated result of the computation on the dataset to the driver program and to the user. The following are some examples of actions <code>count()</code>,<code>first()</code>,<code>collect()</code>, <code>show()</code></p>
