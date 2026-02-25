@@ -35,6 +35,83 @@
     "text": "Apache Spark has a query optimization engine that rewrites the user code for optimum computational cost and execution efficiency. The optimization process start is carried out in several steps from parsing the code to executing the optimized generated code.\n\n\n\nSpark Query Optimization Steps\n\n\n\nParsing\nEach SQL / Hive queries are first read in the Parsing process. This parsing process converts the input into Abstract Syntax Tree (AST). This AST is called Unresolved Logical Plan.\n\n\nAnalysis\nThe Unresolved Logical Plan is validated for Table/Column names and data types by looking up into the catalog. It also resolves the attributes and binds to the actual schema. It also verifies the functions that is actually available. After Analyzer Rules Execution, this steps yields an entity known as Resolved Logical Plan\n\n\nLogical Optimization\nThe Resolved Logical Plan is then undergoes into a Rule-Based Optimization step. There are several rules that are applied here and some of the key optimization rules are\n\nPredicate Pushdown: This rule prepones the filter operation as early as possible in the query execution plan. The idea is to reduce the volume of data that flows in the operation as early as possible.\nCombine Filters: This rule combines similar filter operations into one.\nProjection Pruning: This rule selects only the required columns that are implicated in the query.\nNull Propagation: Optimize null checks\nConstant Propagation: if there is any computation involves using a constant, it is simplified at the beginning and not executed repeatedly through out the query execution.\n\nThe logical optimization steps yields Optimized Logical Plan\n\n\nPhysical Planning\nThe Optimized Logical Plan is then evaluated against a cost model for several alternative plans. The estimation of cost is projected based on\n\nData size\nComplexity of the operation\nNetwork shuffle cost\nResource requirements\n\nThe least expensive model is selected in this step and it is called Selected Physical Plan.\n\n\nCode Generation and execution\nThe selected physical plan is then taken as a base and an optimized code and the execution is then carried out as described in Essentials of Spark Architecture.\n\n\nVisualizing the Spark Optimization Steps\nThe selected physical plans can be read using df.explain() | df.explain(\"simple\") and all the steps of the optimization plan can be seen df.explain(\"extended\"). The generated code can be seen using df.explain(\"codegen\") and df.explain(\"cost\") can print the logical plan and statistics if they are available."
   },
   {
+    "objectID": "posts/2026-02-22-spark-dataframes.html",
+    "href": "posts/2026-02-22-spark-dataframes.html",
+    "title": "DataFrames in Spark: A Comprehensive Guide",
+    "section": "",
+    "text": "Dataframes in Spark are structured and labelled data in two dimensions like a spreadsheet or table. Spark dataframes are built over Resilient Distributed Dataset (RDD) and therefore stored in several partitions.\nSpark Documentation describes Dataframe as &gt; “A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood.”"
+  },
+  {
+    "objectID": "posts/2026-02-22-spark-dataframes.html#what-is-a-spark-dataframe",
+    "href": "posts/2026-02-22-spark-dataframes.html#what-is-a-spark-dataframe",
+    "title": "DataFrames in Spark: A Comprehensive Guide",
+    "section": "",
+    "text": "Dataframes in Spark are structured and labelled data in two dimensions like a spreadsheet or table. Spark dataframes are built over Resilient Distributed Dataset (RDD) and therefore stored in several partitions.\nSpark Documentation describes Dataframe as &gt; “A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood.”"
+  },
+  {
+    "objectID": "posts/2026-02-22-spark-dataframes.html#features-of-dataframe",
+    "href": "posts/2026-02-22-spark-dataframes.html#features-of-dataframe",
+    "title": "DataFrames in Spark: A Comprehensive Guide",
+    "section": "Features of DataFrame",
+    "text": "Features of DataFrame\nOver traditional dataframes, Spark DataFrame offers the following features.\n-Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe. - Lazy Evaluation: Spark dataframes are lazily evaluated. When a transformation is applied over a dataframe, an optimized execution plan is created and the execution is carried out only when an action is called. - Optimized: Spark dataframe is a high level API of RDD and the executions are optimized (logical and physical). The detailed optimization can be read in this article . - Fault Tolerant: Since the spark DataFrame are built over the RDD structure, they are inherently fault tolerant. When a node or partition fails, the replacement partition is recreated by tracking the lineage without restarting the process from scratch or stopping the process. - Schema Aware: Spark dataframes hold defined datatypes and constraints for each column of the dataframe. It offers schema flexibility by supporting schema evolution and dynamic typing.\nOne notable difference between a pandas dataframe and a spark DataFrame is that pd.DataFrame is index aware where as the records in the spark DataFrame are not indexed but stored as partitions, this is known as partition aware property."
+  },
+  {
+    "objectID": "posts/2026-02-22-spark-dataframes.html#creating-a-dataframe",
+    "href": "posts/2026-02-22-spark-dataframes.html#creating-a-dataframe",
+    "title": "DataFrames in Spark: A Comprehensive Guide",
+    "section": "Creating a Dataframe",
+    "text": "Creating a Dataframe\nA dataframe can be created by the following 3 ways:\n\nFrom an external file\nSpark offers several file formats such as csv, json, parquet, ORC, avro, hdfs.. Dataframe can be created from any of these sources using spark.read.csv(\"file_path\", args) or spark.read.format(\"format_name\").load(\"file_path\") which is consistent for all the file formats.\n\n\nFrom another df like object\nSpark dataframes can also be created using traditional data containers such as list of dictionaries / tuples or from pandas DataFrame object. This can be done using spark.createDataFrame(df_name)\nfrom pyspark.sql import SparkSession\n#create a SparkSession\n\nspark = SparkSession.builder.appName(\"EmployeeDataFrame\").getOrCreate()\n\nemployees = [\n  {\"name\": \"John D.\", \"age\": 30, \"department\": \"HR\"},\n  {\"name\": \"Alice G.\", \"age\": 25, \"department\": \"Finance\"},\n  {\"name\": \"Bob T.\", \"age\": 35, \"department\": \"IT\"},\n  {\"name\": \"Eve A.\", \"age\": 28, \"department\": \"Marketing\"}\n]\ndf = spark.createDataFrame(employees)\n#Select only the name and age columns\nnew_df = df.select(\"name\", \"age\")\n\n#Since DataFrame is lazily evaluated, we need to call an explicit action to see the results.\n\nnew_df.show()\n+-------+---+\n|   name|age|\n+------- +---+\n|John D. | 30|\n|Alice G.| 25|\n|  Bob T.| 35|\n|  Eve A.| 28|\n+-------+---+\n\n\nFrom an existing table in the SparkSession\nIf there is a named table available in the SparkSession, it can be read as a DataFrame using read.table() method. For example, lets assume a sales table is available in the SparkSession\n#create a SparkSession\nfrom pyspark.sql import SparkSession\n\nspark = SparkSession.builder.appName(\"Sales\").getOrCreate()\n\ndf = spark.read.table(\"sales\")\ndf.show()\n\n#this will show the existing SQL table now stored as a Spark DataFrame\n+---------+----------+------+--------+--------------+\n| category|    price|product|quantity|  salesperson|\n+---------+----------+------+--------+--------------+\n|Electronics|   1200.5| Laptop|       5|   John Smith|\n|Electronics|    25.99|  Mouse|      20|  Alice Brown|\n| Furniture|    350.0|   Desk|       3|  Bob Johnson|\n| Furniture|    175.5|  Chair|       8|    Eve Davis|\n|Stationery|     4.99|Notebook|     100|   John Smith|\n|Stationery|     1.99|     Pen|     200|  Alice Brown|\n|Electronics|    450.0|Monitor|       4|  Bob Johnson|\n| Furniture|    280.0|Bookshelf|      2|    Eve Davis|\n+---------+----------+------+--------+--------------+\n\nAlternate methods to read a table\nThe table can also be read using a shorter table() orsql() function to store the output of a SQL query as DataFrame()\n##reading using `table()`\ndf = spark.table(\"sales\")\n\n## Storing the output of a SQL query as a Spark DataFrame\ndf = spark.sql(\"SELECT * FROM sales\" )"
+  },
+  {
+    "objectID": "posts/2026-02-22-spark-dataframes.html#operations-on-spark-dataframes",
+    "href": "posts/2026-02-22-spark-dataframes.html#operations-on-spark-dataframes",
+    "title": "DataFrames in Spark: A Comprehensive Guide",
+    "section": "Operations on Spark DataFrames",
+    "text": "Operations on Spark DataFrames\nRDDs (thus Spark DataFrames) supports the following two types of operations - Transformations - Actions ### Transformations\nTransformations create a new dataset from existing one In principle, the transformations are lazily evaluated. Once a transformation is called, a Directed Acyclic Graph (DAG) is built but it is not executed until an action is called. The following are some examples of transformations map(), filter(), sample(),distinct() union() join(), repartition()\n\nActions\nAction returns the evaluated result of the computation on the dataset to the driver program and to the user. The following are some examples of actions count(),first(),collect(), show()\n\nCommon Operations\nHere is an example of common operations on Spark DataFrame\n### Common DataFrame Operations\n\n# Once you have a DataFrame `df`, you can perform various transformations and actions:\n\n# Filtering\nfiltered_df = df.filter(df.age &gt; 28)\n\n# Adding columns\ndf_with_tax = df.withColumn(\"tax\", df.price * 0.1)\n\n# Aggregations\ndf.groupBy(\"department\").avg(\"age\").show()"
+  },
+  {
+    "objectID": "posts/2026-02-22-spark-dataframes.html#conclusion",
+    "href": "posts/2026-02-22-spark-dataframes.html#conclusion",
+    "title": "DataFrames in Spark: A Comprehensive Guide",
+    "section": "Conclusion",
+    "text": "Conclusion\nSpark DataFrames are a powerful and flexible way to work with structured data in Apache Spark. They provide a high-level API for working with data, while also offering the performance and scalability benefits of Spark’s underlying RDD structure. By understanding how to create and manipulate DataFrames, one can unlock the full potential of Spark for the data processing needs."
+  },
+  {
+    "objectID": "posts/2025-12-23-Bigdata-processing.html",
+    "href": "posts/2025-12-23-Bigdata-processing.html",
+    "title": "Spark and Big data Engineering",
+    "section": "",
+    "text": "Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.\nBroadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called “partitions”) that can be processed efficiently on ordinary machines with moderate resources.\n\n\n\nBig Data Engineering is Distributed Computing\n\n\nBuilding high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains."
+  },
+  {
+    "objectID": "posts/2025-12-23-Bigdata-processing.html#big-data-processing",
+    "href": "posts/2025-12-23-Bigdata-processing.html#big-data-processing",
+    "title": "Spark and Big data Engineering",
+    "section": "",
+    "text": "Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.\nBroadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called “partitions”) that can be processed efficiently on ordinary machines with moderate resources.\n\n\n\nBig Data Engineering is Distributed Computing\n\n\nBuilding high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains."
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Project Portfolio",
+    "section": "",
+    "text": "This section is being updated. In the meantime, please feel free to checkout my github. Thank you for your visit."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to My Personal Website",
+    "section": "",
+    "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
+  },
+  {
+    "objectID": "index.html#section",
+    "href": "index.html#section",
+    "title": "Welcome to My Personal Website",
+    "section": "",
+    "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
+  },
+  {
     "objectID": "posts/index.html",
     "href": "posts/index.html",
     "title": "Blog",
@@ -53,42 +130,7 @@
     "href": "posts/index.html#latest-posts",
     "title": "Blog",
     "section": "Latest Posts",
-    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nData Warehousing and Japanese Philosophy of Housekeeping: A Unique Perspective\n\n\n\ndata engineering\n\n7s\n\nPersonal Reflection\n\n\n\nA reflection on how the Japanese concept of 7S used in factories could be related to modern Data warehousing principles.\n\n\n\n\n\nFeb 15, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nA guide to resolving DNS issues in Docker containers when accessing external APIs.\n\n\n\ndata engineering\n\ndocker\n\nnetworking\n\n\n\nDescription of DNS resolution issues in Docker and how to fix them using the –dns flag.\n\n\n\n\n\nFeb 3, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nQuery Optimization in Apache Spark: A Deep Dive\n\n\n\nSpark\n\ndata engineering\n\ndistributed computing\n\npyspark\n\nsparkSQL\n\nspark optimization\n\n\n\nEssentials of Spark Query Optimization Process.\n\n\n\n\n\nJan 26, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nEssentials of Spark Architecture\n\n\n\nSpark\n\ndata engineering\n\ndistributed computing\n\npyspark\n\nsparkSQL\n\n\n\nEssentials of how Spark is constructed and inner mechanics of how a Spark job is executed.\n\n\n\n\n\nJan 14, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nEssentials of Apache Spark\n\n\n\ndistributed computing\n\ndata engineering\n\napache spark\n\n\n\nA brief summary of Apache Spark and its core features.\n\n\n\n\n\nJan 5, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nSpark and Big data Engineering\n\n\n\ndistributed computing\n\ndata engineering\n\napache spark\n\n\n\nEssentials of Big Data Engineering. In essence, all big data processing is distributed computing.\n\n\n\n\n\nDec 23, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nWeaving Code: When the Loom Met the Algorithm\n\n\n\nHistory of Computing\n\nPersonal Reflection\n\n\n\nA reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.\n\n\n\n\n\nNov 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata engineering\n\ndistributed computing\n\npython\n\n\n\nA Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.\n\n\n\n\n\nNov 8, 2025\n\n\n\n\n\nNo matching items\n\n← Back to Home"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome to My Personal Website",
-    "section": "",
-    "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
-  },
-  {
-    "objectID": "index.html#section",
-    "href": "index.html#section",
-    "title": "Welcome to My Personal Website",
-    "section": "",
-    "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nExplore my projects\n\nExplore →\n\n\n\n\nBrowse my latest articles\n\nExplore →"
-  },
-  {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Project Portfolio",
-    "section": "",
-    "text": "This section is being updated. In the meantime, please feel free to checkout my github. Thank you for your visit."
-  },
-  {
-    "objectID": "posts/2025-12-23-Bigdata-processing.html",
-    "href": "posts/2025-12-23-Bigdata-processing.html",
-    "title": "Spark and Big data Engineering",
-    "section": "",
-    "text": "Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.\nBroadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called “partitions”) that can be processed efficiently on ordinary machines with moderate resources.\n\n\n\nBig Data Engineering is Distributed Computing\n\n\nBuilding high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains."
-  },
-  {
-    "objectID": "posts/2025-12-23-Bigdata-processing.html#big-data-processing",
-    "href": "posts/2025-12-23-Bigdata-processing.html#big-data-processing",
-    "title": "Spark and Big data Engineering",
-    "section": "",
-    "text": "Large-scale data processing is almost always accomplished using distributed computing. This remains true in the verge of 2026, while we wait for IBM to deliver the next big quantum computing breakthrough.\nBroadly speaking, there are two principal approaches to distributed data processing. As Peter Griffin would say, hitting two birds with one stone requires either two small birds or one very big stone. Distributed systems follow the same logic: either by massively scaling the computing infrastructure to process large datasets all at once, or break the data into smaller chunks (so-called “partitions”) that can be processed efficiently on ordinary machines with moderate resources.\n\n\n\nBig Data Engineering is Distributed Computing\n\n\nBuilding high-performance computing clusters (HPC) requires significant investment, specialized resource allocation managers (like SLURM) and physical space. In contrast, software frameworks such as the Hadoop Distributed File System (HDFS), MapReduce enabled creating partitions and achieving parallelism across commodity hardware, effectively democratizing large-scale data processing. Apache Spark (written in Scala) went further by leveraging in-memory computing, an inbuilt cluster manager, along with APIs for popular programming languages such as Python, R and Java. This eliminated the performance bottlenecks that persisted even with Hadoop. In a short period, Apache Spark became the go-to framework for big data engineering across diverse domains."
+    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nDataFrames in Spark: A Comprehensive Guide\n\n\n\ndata engineering\n\nspark\n\ndataframes\n\n\n\nA comprehensive guide to understanding and working with DataFrames in Apache Spark, including their benefits, operations.\n\n\n\n\n\nFeb 22, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nData Warehousing and Japanese Philosophy of Housekeeping: A Unique Perspective\n\n\n\ndata engineering\n\n7s\n\nPersonal Reflection\n\n\n\nA reflection on how the Japanese concept of 7S used in factories could be related to modern Data warehousing principles.\n\n\n\n\n\nFeb 15, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nA guide to resolving DNS issues in Docker containers when accessing external APIs.\n\n\n\ndata engineering\n\ndocker\n\nnetworking\n\n\n\nDescription of DNS resolution issues in Docker and how to fix them using the –dns flag.\n\n\n\n\n\nFeb 3, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nQuery Optimization in Apache Spark: A Deep Dive\n\n\n\nSpark\n\ndata engineering\n\ndistributed computing\n\npyspark\n\nsparkSQL\n\nspark optimization\n\n\n\nEssentials of Spark Query Optimization Process.\n\n\n\n\n\nJan 26, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nEssentials of Spark Architecture\n\n\n\nSpark\n\ndata engineering\n\ndistributed computing\n\npyspark\n\nsparkSQL\n\n\n\nEssentials of how Spark is constructed and inner mechanics of how a Spark job is executed.\n\n\n\n\n\nJan 14, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nEssentials of Apache Spark\n\n\n\ndistributed computing\n\ndata engineering\n\napache spark\n\n\n\nA brief summary of Apache Spark and its core features.\n\n\n\n\n\nJan 5, 2026\n\n\n\n\n\n\n\n\n\n\n\n\nSpark and Big data Engineering\n\n\n\ndistributed computing\n\ndata engineering\n\napache spark\n\n\n\nEssentials of Big Data Engineering. In essence, all big data processing is distributed computing.\n\n\n\n\n\nDec 23, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nWeaving Code: When the Loom Met the Algorithm\n\n\n\nHistory of Computing\n\nPersonal Reflection\n\n\n\nA reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.\n\n\n\n\n\nNov 27, 2025\n\n\n\n\n\n\n\n\n\n\n\n\nA Data Pipeline is a distributed system. Start Architecting It Like One\n\n\n\ndocker\n\ndata engineering\n\ndistributed computing\n\npython\n\n\n\nA Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.\n\n\n\n\n\nNov 8, 2025\n\n\n\n\n\nNo matching items\n\n← Back to Home"
   },
   {
     "objectID": "posts/2025-11-09-docker-data-pipeline.html",

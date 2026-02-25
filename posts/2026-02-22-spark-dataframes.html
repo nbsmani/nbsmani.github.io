@@ -6,8 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
+<meta name="dcterms.date" content="2026-02-22">
+<meta name="description" content="A comprehensive guide to understanding and working with DataFrames in Apache Spark, including their benefits, operations.">
 
-<title>Blog – Balasubramaniam Namasivayam</title>
+<title>DataFrames in Spark: A Comprehensive Guide – Balasubramaniam Namasivayam</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -20,6 +22,41 @@ ul.task-list li input[type="checkbox"] {
   margin: 0 0.8em 0.2em -1em; /* quarto-specific, see https://github.com/quarto-dev/quarto-cli/issues/4556 */ 
   vertical-align: middle;
 }
+/* CSS for syntax highlighting */
+html { -webkit-text-size-adjust: 100%; }
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+  }
+pre.numberSource { margin-left: 3em;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
 </style>
 
 
@@ -31,8 +68,6 @@ ul.task-list li input[type="checkbox"] {
 <script src="../site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="../">
 <link href="../assets/img/logo/yinyang.svg" rel="icon" type="image/svg+xml">
-<script src="../site_libs/quarto-listing/list.min.js"></script>
-<script src="../site_libs/quarto-listing/quarto-listing.js"></script>
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
 <script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
@@ -71,65 +106,7 @@ ul.task-list li input[type="checkbox"] {
     "search-label": "Search"
   }
 }</script>
-<script>
 
-  window.document.addEventListener("DOMContentLoaded", function (_event) {
-    const listingTargetEl = window.document.querySelector('#listing-listing .list');
-    if (!listingTargetEl) {
-      // No listing discovered, do not attach.
-      return; 
-    }
-
-    const options = {
-      valueNames: ['listing-date','listing-title','listing-author','listing-image','listing-description','listing-categories',{ data: ['index'] },{ data: ['categories'] },{ data: ['listing-date-sort'] },{ data: ['listing-file-modified-sort'] }],
-      
-      searchColumns: ["listing-date","listing-title","listing-author","listing-image","listing-description","listing-categories"],
-    };
-
-    window['quarto-listings'] = window['quarto-listings'] || {};
-    window['quarto-listings']['listing-listing'] = new List('listing-listing', options);
-
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  });
-
-  window.addEventListener('hashchange',() => {
-    if (window['quarto-listing-loaded']) {
-      window['quarto-listing-loaded']();
-    }
-  })
-  </script>
-
-  <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
-
-<script type="text/javascript">
-const typesetMath = (el) => {
-  if (window.MathJax) {
-    // MathJax Typeset
-    window.MathJax.typeset([el]);
-  } else if (window.katex) {
-    // KaTeX Render
-    var mathElements = el.getElementsByClassName("math");
-    var macros = [];
-    for (var i = 0; i < mathElements.length; i++) {
-      var texText = mathElements[i].firstChild;
-      if (mathElements[i].tagName == "SPAN" && texText && texText.data) {
-        window.katex.render(texText.data, mathElements[i], {
-          displayMode: mathElements[i].classList.contains('display'),
-          throwOnError: false,
-          macros: macros,
-          fleqn: false
-        });
-      }
-    }
-  }
-}
-window.Quarto = {
-  typesetMath
-};
-</script>
 
 <link rel="stylesheet" href="../assets/styles.css">
 </head>
@@ -164,7 +141,7 @@ window.Quarto = {
 <span class="menu-text">Projects</span></a>
   </li>  
   <li class="nav-item">
-    <a class="nav-link active" href="../posts/index.html" aria-current="page"> 
+    <a class="nav-link" href="../posts/index.html"> 
 <span class="menu-text">Blog</span></a>
   </li>  
   <li class="nav-item">
@@ -199,24 +176,51 @@ window.Quarto = {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#all-posts" id="toc-all-posts" class="nav-link active" data-scroll-target="#all-posts">All Posts</a></li>
-  <li><a href="#latest-posts" id="toc-latest-posts" class="nav-link" data-scroll-target="#latest-posts">Latest Posts</a></li>
+  <li><a href="#what-is-a-spark-dataframe" id="toc-what-is-a-spark-dataframe" class="nav-link active" data-scroll-target="#what-is-a-spark-dataframe">What is a Spark Dataframe?</a></li>
+  <li><a href="#features-of-dataframe" id="toc-features-of-dataframe" class="nav-link" data-scroll-target="#features-of-dataframe">Features of DataFrame</a></li>
+  <li><a href="#creating-a-dataframe" id="toc-creating-a-dataframe" class="nav-link" data-scroll-target="#creating-a-dataframe">Creating a Dataframe</a>
+  <ul class="collapse">
+  <li><a href="#from-an-external-file" id="toc-from-an-external-file" class="nav-link" data-scroll-target="#from-an-external-file">From an external file</a></li>
+  <li><a href="#from-another-df-like-object" id="toc-from-another-df-like-object" class="nav-link" data-scroll-target="#from-another-df-like-object">From another df like object</a></li>
+  <li><a href="#from-an-existing-table-in-the-sparksession" id="toc-from-an-existing-table-in-the-sparksession" class="nav-link" data-scroll-target="#from-an-existing-table-in-the-sparksession">From an existing table in the SparkSession</a></li>
+  </ul></li>
+  <li><a href="#operations-on-spark-dataframes" id="toc-operations-on-spark-dataframes" class="nav-link" data-scroll-target="#operations-on-spark-dataframes">Operations on Spark DataFrames</a>
+  <ul class="collapse">
+  <li><a href="#actions" id="toc-actions" class="nav-link" data-scroll-target="#actions">Actions</a></li>
+  </ul></li>
+  <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
-    <h5 class="quarto-listing-category-title">Categories</h5><div class="quarto-listing-category category-default"><div class="category" data-category="">All <span class="quarto-category-count">(9)</span></div><div class="category" data-category="N3M=">7s <span class="quarto-category-count">(1)</span></div><div class="category" data-category="YXBhY2hlJTIwc3Bhcms=">apache spark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="ZGF0YSUyMGVuZ2luZWVyaW5n">data engineering <span class="quarto-category-count">(8)</span></div><div class="category" data-category="ZGF0YWZyYW1lcw==">dataframes <span class="quarto-category-count">(1)</span></div><div class="category" data-category="ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmc=">distributed computing <span class="quarto-category-count">(5)</span></div><div class="category" data-category="ZG9ja2Vy">docker <span class="quarto-category-count">(2)</span></div><div class="category" data-category="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n">History of Computing <span class="quarto-category-count">(1)</span></div><div class="category" data-category="bmV0d29ya2luZw==">networking <span class="quarto-category-count">(1)</span></div><div class="category" data-category="UGVyc29uYWwlMjBSZWZsZWN0aW9u">Personal Reflection <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cHlzcGFyaw==">pyspark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="cHl0aG9u">python <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3Bhcms=">spark <span class="quarto-category-count">(1)</span></div><div class="category" data-category="U3Bhcms=">Spark <span class="quarto-category-count">(2)</span></div><div class="category" data-category="c3BhcmslMjBvcHRpbWl6YXRpb24=">spark optimization <span class="quarto-category-count">(1)</span></div><div class="category" data-category="c3BhcmtTUUw=">sparkSQL <span class="quarto-category-count">(2)</span></div></div></div>
+    </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">Blog</h1>
-</div>
+<h1 class="title">DataFrames in Spark: A Comprehensive Guide</h1>
+  <div class="quarto-categories">
+    <div class="quarto-category">data engineering</div>
+    <div class="quarto-category">spark</div>
+    <div class="quarto-category">dataframes</div>
+  </div>
+  </div>
 
+<div>
+  <div class="description">
+    A comprehensive guide to understanding and working with DataFrames in Apache Spark, including their benefits, operations.
+  </div>
+</div>
 
 
 <div class="quarto-title-meta">
 
     
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">February 22, 2026</p>
+    </div>
+  </div>
   
     
   </div>
@@ -226,308 +230,117 @@ window.Quarto = {
 </header>
 
 
-<section id="all-posts" class="level2">
-<h2 class="anchored" data-anchor-id="all-posts">All Posts</h2>
-<p>Complete archive of my writings on technology, data, and distributed systems.</p>
+<section id="what-is-a-spark-dataframe" class="level2">
+<h2 class="anchored" data-anchor-id="what-is-a-spark-dataframe">What is a Spark Dataframe?</h2>
+<p>Dataframes in Spark are structured and labelled data in two dimensions like a spreadsheet or table. Spark dataframes are built over Resilient Distributed Dataset (RDD) and therefore stored in several partitions.</p>
+<p>Spark Documentation describes Dataframe as &gt; “A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood.”</p>
 </section>
-<section id="latest-posts" class="level2">
-<h2 class="anchored" data-anchor-id="latest-posts">Latest Posts</h2>
-<div id="listing-listing" class="quarto-listing quarto-listing-container-default">
-<div class="list quarto-listing-default">
-<div class="quarto-post image-right" data-index="0" data-categories="ZGF0YSUyMGVuZ2luZWVyaW5nJTJDc3BhcmslMkNkYXRhZnJhbWVz" data-listing-date-sort="1771718400000" data-listing-file-modified-sort="1772017818687" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="871">
-<div class="thumbnail"><a href="../posts/2026-02-22-spark-dataframes.html" class="no-external">
-
-<div class="listing-item-img-placeholder card-img-top" >&nbsp;</div>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-02-22-spark-dataframes.html" class="no-external">DataFrames in Spark: A Comprehensive Guide</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3Bhcms='); return false;">spark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YWZyYW1lcw=='); return false;">dataframes</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-02-22-spark-dataframes.html" class="no-external">
-<p>A comprehensive guide to understanding and working with DataFrames in Apache Spark, including their benefits, operations.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-02-22-spark-dataframes.html" class="no-external">
-<div class="listing-date">
-Feb 22, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="1" data-categories="ZGF0YSUyMGVuZ2luZWVyaW5nJTJDN3MlMkNQZXJzb25hbCUyMFJlZmxlY3Rpb24=" data-listing-date-sort="1771113600000" data-listing-file-modified-sort="1772017818687" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="6" data-listing-word-count-sort="1076">
-<div class="thumbnail"><a href="../posts/2026-02-15-7s-principle-and-data-warehousing.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/07-DW-7S-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-02-15-7s-principle-and-data-warehousing.html" class="no-external">Data Warehousing and Japanese Philosophy of Housekeeping: A Unique Perspective</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('N3M='); return false;">7s</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGVyc29uYWwlMjBSZWZsZWN0aW9u'); return false;">Personal Reflection</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-02-15-7s-principle-and-data-warehousing.html" class="no-external">
-<p>A reflection on how the Japanese concept of 7S used in factories could be related to modern Data warehousing principles.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-02-15-7s-principle-and-data-warehousing.html" class="no-external">
-<div class="listing-date">
-Feb 15, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="2" data-categories="ZGF0YSUyMGVuZ2luZWVyaW5nJTJDZG9ja2VyJTJDbmV0d29ya2luZw==" data-listing-date-sort="1770076800000" data-listing-file-modified-sort="1772017818687" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="986">
-<div class="thumbnail"><a href="../posts/2026-02-03-docker-dns-resolution.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/06-docker-dns-api-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-02-03-docker-dns-resolution.html" class="no-external">A guide to resolving DNS issues in Docker containers when accessing external APIs.</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZG9ja2Vy'); return false;">docker</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('bmV0d29ya2luZw=='); return false;">networking</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-02-03-docker-dns-resolution.html" class="no-external">
-<p>Description of DNS resolution issues in Docker and how to fix them using the –dns flag.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-02-03-docker-dns-resolution.html" class="no-external">
-<div class="listing-date">
-Feb 3, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="3" data-categories="U3BhcmslMkNkYXRhJTIwZW5naW5lZXJpbmclMkNkaXN0cmlidXRlZCUyMGNvbXB1dGluZyUyQ3B5c3BhcmslMkNzcGFya1NRTCUyQ3NwYXJrJTIwb3B0aW1pemF0aW9u" data-listing-date-sort="1769385600000" data-listing-file-modified-sort="1772017818687" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="385">
-<div class="thumbnail"><a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/05-Spark-Query-Optimization-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">Query Optimization in Apache Spark: A Deep Dive</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('U3Bhcms='); return false;">Spark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmc='); return false;">distributed computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHlzcGFyaw=='); return false;">pyspark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3BhcmtTUUw='); return false;">sparkSQL</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3BhcmslMjBvcHRpbWl6YXRpb24='); return false;">spark optimization</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">
-<p>Essentials of Spark Query Optimization Process.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-26-spark-query-optimization.html" class="no-external">
-<div class="listing-date">
-Jan 26, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="4" data-categories="U3BhcmslMkNkYXRhJTIwZW5naW5lZXJpbmclMkNkaXN0cmlidXRlZCUyMGNvbXB1dGluZyUyQ3B5c3BhcmslMkNzcGFya1NRTA==" data-listing-date-sort="1768348800000" data-listing-file-modified-sort="1772017818687" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="572">
-<div class="thumbnail"><a href="../posts/2026-01-14-spark-architecture.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/04-sparkArchitecture-00.png"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-14-spark-architecture.html" class="no-external">Essentials of Spark Architecture</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('U3Bhcms='); return false;">Spark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmc='); return false;">distributed computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHlzcGFyaw=='); return false;">pyspark</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('c3BhcmtTUUw='); return false;">sparkSQL</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-14-spark-architecture.html" class="no-external">
-<p>Essentials of how Spark is constructed and inner mechanics of how a Spark job is executed.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-14-spark-architecture.html" class="no-external">
-<div class="listing-date">
-Jan 14, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="5" data-categories="ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmclMkNkYXRhJTIwZW5naW5lZXJpbmclMkNhcGFjaGUlMjBzcGFyaw==" data-listing-date-sort="1767571200000" data-listing-file-modified-sort="1772017818687" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="4" data-listing-word-count-sort="782">
-<div class="thumbnail"><a href="../posts/2026-01-05-spark.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/03-Spark-for-bdp-00.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2026-01-05-spark.html" class="no-external">Essentials of Apache Spark</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmc='); return false;">distributed computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlJTIwc3Bhcms='); return false;">apache spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2026-01-05-spark.html" class="no-external">
-<p>A brief summary of Apache Spark and its core features.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2026-01-05-spark.html" class="no-external">
-<div class="listing-date">
-Jan 5, 2026
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="6" data-categories="ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmclMkNkYXRhJTIwZW5naW5lZXJpbmclMkNhcGFjaGUlMjBzcGFyaw==" data-listing-date-sort="1766448000000" data-listing-file-modified-sort="1772017818686" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="2" data-listing-word-count-sort="205">
-<div class="thumbnail"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/02-bigdata-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">Spark and Big data Engineering</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmc='); return false;">distributed computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('YXBhY2hlJTIwc3Bhcms='); return false;">apache spark</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<p>Essentials of Big Data Engineering. In essence, all big data processing is distributed computing.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-12-23-Bigdata-processing.html" class="no-external">
-<div class="listing-date">
-Dec 23, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="7" data-categories="SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5nJTJDUGVyc29uYWwlMjBSZWZsZWN0aW9u" data-listing-date-sort="1764201600000" data-listing-file-modified-sort="1772017818686" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="3" data-listing-word-count-sort="479">
-<div class="thumbnail"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/01-jacquard-00.jpeg" alt="Portrait of Joseph Marie Jacquard woven in silk fabric using punched cards"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">Weaving Code: When the Loom Met the Algorithm</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('SGlzdG9yeSUyMG9mJTIwQ29tcHV0aW5n'); return false;">History of Computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('UGVyc29uYWwlMjBSZWZsZWN0aW9u'); return false;">Personal Reflection</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<p>A reflection on how punched cards from 1801 evolved into modern AI, completing a perfect technological circle.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-27-jacquard.html" class="no-external">
-<div class="listing-date">
-Nov 27, 2025
-</div>
-</a>
-</div>
-</div>
-<div class="quarto-post image-right" data-index="8" data-categories="ZG9ja2VyJTJDZGF0YSUyMGVuZ2luZWVyaW5nJTJDZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmclMkNweXRob24=" data-listing-date-sort="1762560000000" data-listing-file-modified-sort="1772017818686" data-listing-date-modified-sort="NaN" data-listing-reading-time-sort="5" data-listing-word-count-sort="927">
-<div class="thumbnail"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-
-<p class="card-img-top"><img src="../assets/img/00-docker-01.jpg"  class="thumbnail-image card-img"/></p>
-
-</a></div>
-<div class="body">
-<h3 class="no-anchor listing-title">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">A Data Pipeline is a distributed system. Start Architecting It Like One</a>
-</h3>
-<div class="listing-categories">
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZG9ja2Vy'); return false;">docker</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGF0YSUyMGVuZ2luZWVyaW5n'); return false;">data engineering</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('ZGlzdHJpYnV0ZWQlMjBjb21wdXRpbmc='); return false;">distributed computing</div>
-
-<div class="listing-category" onclick="window.quartoListingCategory('cHl0aG9u'); return false;">python</div>
-
-</div>
-<div class="delink listing-description"><a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<p>A Data pipeline is indeed a distributed system since it usually has more than one component. It must be orchestrated properly to be able to work everywhere. This article demonstrates a simple ETL pipeline that does not break when deployed in production.</p>
-</a></div>
-</div>
-<div class="metadata">
-<a href="../posts/2025-11-09-docker-data-pipeline.html" class="no-external">
-<div class="listing-date">
-Nov 8, 2025
-</div>
-</a>
-</div>
-</div>
-</div>
-<div class="listing-no-matching d-none">No matching items</div>
-</div>
-<p><a href="..">← Back to Home</a></p>
-
+<section id="features-of-dataframe" class="level2">
+<h2 class="anchored" data-anchor-id="features-of-dataframe">Features of DataFrame</h2>
+<p>Over traditional dataframes, Spark DataFrame offers the following features.</p>
+<p>-Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe. - Lazy Evaluation: Spark dataframes are lazily evaluated. When a transformation is applied over a dataframe, an optimized execution plan is created and the execution is carried out only when an action is called. - Optimized: Spark dataframe is a high level API of RDD and the executions are optimized (logical and physical). The detailed optimization can be read in this <a href="https://nbsmani.github.io/posts/2026-01-26-spark-query-optimization.html">article</a> . - Fault Tolerant: Since the spark DataFrame are built over the RDD structure, they are inherently fault tolerant. When a node or partition fails, the replacement partition is recreated by tracking the lineage without restarting the process from scratch or stopping the process. - Schema Aware: Spark dataframes hold defined datatypes and constraints for each column of the dataframe. It offers schema flexibility by supporting schema evolution and dynamic typing.</p>
+<p>One notable difference between a pandas dataframe and a spark DataFrame is that <code>pd.DataFrame</code> is index aware where as the records in the spark DataFrame are not indexed but stored as partitions, this is known as partition aware property.</p>
+</section>
+<section id="creating-a-dataframe" class="level2">
+<h2 class="anchored" data-anchor-id="creating-a-dataframe">Creating a Dataframe</h2>
+<p>A dataframe can be created by the following 3 ways:</p>
+<section id="from-an-external-file" class="level3">
+<h3 class="anchored" data-anchor-id="from-an-external-file">From an external file</h3>
+<p>Spark offers several file formats such as csv, json, parquet, ORC, avro, hdfs.. Dataframe can be created from any of these sources using <code>spark.read.csv("file_path", args)</code> or <code>spark.read.format("format_name").load("file_path")</code> which is consistent for all the file formats.</p>
+</section>
+<section id="from-another-df-like-object" class="level3">
+<h3 class="anchored" data-anchor-id="from-another-df-like-object">From another df like object</h3>
+<p>Spark dataframes can also be created using traditional data containers such as list of dictionaries / tuples or from pandas DataFrame object. This can be done using <code>spark.createDataFrame(df_name)</code></p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#create a SparkSession</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">"EmployeeDataFrame"</span>).getOrCreate()</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>employees <span class="op">=</span> [</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"John D."</span>, <span class="st">"age"</span>: <span class="dv">30</span>, <span class="st">"department"</span>: <span class="st">"HR"</span>},</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"Alice G."</span>, <span class="st">"age"</span>: <span class="dv">25</span>, <span class="st">"department"</span>: <span class="st">"Finance"</span>},</span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"Bob T."</span>, <span class="st">"age"</span>: <span class="dv">35</span>, <span class="st">"department"</span>: <span class="st">"IT"</span>},</span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"Eve A."</span>, <span class="st">"age"</span>: <span class="dv">28</span>, <span class="st">"department"</span>: <span class="st">"Marketing"</span>}</span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>]</span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.createDataFrame(employees)</span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Select only the name and age columns</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>new_df <span class="op">=</span> df.select(<span class="st">"name"</span>, <span class="st">"age"</span>)</span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#Since DataFrame is lazily evaluated, we need to call an explicit action to see the results.</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>new_df.show()</span>
+<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">+-------+---+</span></span>
+<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>   name<span class="op">|</span>age<span class="op">|</span></span>
+<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="op">+-------</span> <span class="op">+---+</span></span>
+<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>John D. <span class="op">|</span> <span class="dv">30</span><span class="op">|</span></span>
+<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Alice G.<span class="op">|</span> <span class="dv">25</span><span class="op">|</span></span>
+<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>  Bob T.<span class="op">|</span> <span class="dv">35</span><span class="op">|</span></span>
+<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>  Eve A.<span class="op">|</span> <span class="dv">28</span><span class="op">|</span></span>
+<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="op">+-------+---+</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+<section id="from-an-existing-table-in-the-sparksession" class="level3">
+<h3 class="anchored" data-anchor-id="from-an-existing-table-in-the-sparksession">From an existing table in the SparkSession</h3>
+<p>If there is a named table available in the <code>SparkSession</code>, it can be read as a DataFrame using <code>read.table()</code> method. For example, lets assume a <code>sales</code> table is available in the SparkSession</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create a SparkSession</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">"Sales"</span>).getOrCreate()</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.read.table(<span class="st">"sales"</span>)</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df.show()</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#this will show the existing SQL table now stored as a Spark DataFrame</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">+---------+----------+------+--------+--------------+</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> category<span class="op">|</span>    price<span class="op">|</span>product<span class="op">|</span>quantity<span class="op">|</span>  salesperson<span class="op">|</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">+---------+----------+------+--------+--------------+</span></span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Electronics<span class="op">|</span>   <span class="fl">1200.5</span><span class="op">|</span> Laptop<span class="op">|</span>       <span class="dv">5</span><span class="op">|</span>   John Smith<span class="op">|</span></span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Electronics<span class="op">|</span>    <span class="fl">25.99</span><span class="op">|</span>  Mouse<span class="op">|</span>      <span class="dv">20</span><span class="op">|</span>  Alice Brown<span class="op">|</span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Furniture<span class="op">|</span>    <span class="fl">350.0</span><span class="op">|</span>   Desk<span class="op">|</span>       <span class="dv">3</span><span class="op">|</span>  Bob Johnson<span class="op">|</span></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Furniture<span class="op">|</span>    <span class="fl">175.5</span><span class="op">|</span>  Chair<span class="op">|</span>       <span class="dv">8</span><span class="op">|</span>    Eve Davis<span class="op">|</span></span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Stationery<span class="op">|</span>     <span class="fl">4.99</span><span class="op">|</span>Notebook<span class="op">|</span>     <span class="dv">100</span><span class="op">|</span>   John Smith<span class="op">|</span></span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Stationery<span class="op">|</span>     <span class="fl">1.99</span><span class="op">|</span>     Pen<span class="op">|</span>     <span class="dv">200</span><span class="op">|</span>  Alice Brown<span class="op">|</span></span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Electronics<span class="op">|</span>    <span class="fl">450.0</span><span class="op">|</span>Monitor<span class="op">|</span>       <span class="dv">4</span><span class="op">|</span>  Bob Johnson<span class="op">|</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Furniture<span class="op">|</span>    <span class="fl">280.0</span><span class="op">|</span>Bookshelf<span class="op">|</span>      <span class="dv">2</span><span class="op">|</span>    Eve Davis<span class="op">|</span></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="op">+---------+----------+------+--------+--------------+</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="alternate-methods-to-read-a-table" class="level4">
+<h4 class="anchored" data-anchor-id="alternate-methods-to-read-a-table">Alternate methods to read a table</h4>
+<p>The table can also be read using a shorter <code>table()</code> or<code>sql()</code> function to store the output of a SQL query as DataFrame()</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">##reading using `table()`</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.table(<span class="st">"sales"</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Storing the output of a SQL query as a Spark DataFrame</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.sql(<span class="st">"SELECT * FROM sales"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+</section>
+<section id="operations-on-spark-dataframes" class="level2">
+<h2 class="anchored" data-anchor-id="operations-on-spark-dataframes">Operations on Spark DataFrames</h2>
+<p>RDDs (thus Spark DataFrames) supports the following two types of operations - Transformations - Actions ### Transformations</p>
+<p>Transformations create a new dataset from existing one In principle, the transformations are lazily evaluated. Once a transformation is called, a Directed Acyclic Graph (DAG) is built but it is not executed until an action is called. The following are some examples of transformations <code>map()</code>, <code>filter()</code>, <code>sample()</code>,<code>distinct()</code> <code>union()</code> <code>join()</code>, <code>repartition()</code></p>
+<section id="actions" class="level3">
+<h3 class="anchored" data-anchor-id="actions">Actions</h3>
+<p>Action returns the evaluated result of the computation on the dataset to the driver program and to the user. The following are some examples of actions <code>count()</code>,<code>first()</code>,<code>collect()</code>, <code>show()</code></p>
+<section id="common-operations" class="level4">
+<h4 class="anchored" data-anchor-id="common-operations">Common Operations</h4>
+<p>Here is an example of common operations on Spark DataFrame</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Common DataFrame Operations</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Once you have a DataFrame `df`, you can perform various transformations and actions:</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtering</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>filtered_df <span class="op">=</span> df.<span class="bu">filter</span>(df.age <span class="op">&gt;</span> <span class="dv">28</span>)</span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding columns</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>df_with_tax <span class="op">=</span> df.withColumn(<span class="st">"tax"</span>, df.price <span class="op">*</span> <span class="fl">0.1</span>)</span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregations</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>df.groupBy(<span class="st">"department"</span>).avg(<span class="st">"age"</span>).show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+</section>
+</section>
+</section>
+<section id="conclusion" class="level2">
+<h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
+<p>Spark DataFrames are a powerful and flexible way to work with structured data in Apache Spark. They provide a high-level API for working with data, while also offering the performance and scalability benefits of Spark’s underlying RDD structure. By understanding how to create and manipulate DataFrames, one can unlock the full potential of Spark for the data processing needs.</p>
 
 
 </section>
