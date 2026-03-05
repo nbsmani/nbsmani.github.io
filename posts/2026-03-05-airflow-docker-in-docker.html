@@ -6,10 +6,10 @@
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
-<meta name="dcterms.date" content="2026-02-22">
-<meta name="description" content="A comprehensive guide to understanding and working with DataFrames in Apache Spark, including their benefits, operations.">
+<meta name="dcterms.date" content="2026-03-05">
+<meta name="description" content="How to use Docker in Docker (DinD) with Airflow to solve the mount path issue and enable seamless containerized task execution.">
 
-<title>DataFrames in Spark: A Comprehensive Guide – Balasubramaniam Namasivayam</title>
+<title>Solving Docker Bind Mount Path Errors in Airflow: Portable Solutions – Balasubramaniam Namasivayam</title>
 <style>
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
@@ -176,19 +176,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#what-is-a-spark-dataframe" id="toc-what-is-a-spark-dataframe" class="nav-link active" data-scroll-target="#what-is-a-spark-dataframe">What is a Spark Dataframe?</a></li>
-  <li><a href="#features-of-dataframe" id="toc-features-of-dataframe" class="nav-link" data-scroll-target="#features-of-dataframe">Features of DataFrame</a></li>
-  <li><a href="#creating-a-dataframe" id="toc-creating-a-dataframe" class="nav-link" data-scroll-target="#creating-a-dataframe">Creating a Dataframe</a>
-  <ul class="collapse">
-  <li><a href="#from-an-external-file" id="toc-from-an-external-file" class="nav-link" data-scroll-target="#from-an-external-file">From an external file</a></li>
-  <li><a href="#from-another-df-like-object" id="toc-from-another-df-like-object" class="nav-link" data-scroll-target="#from-another-df-like-object">From another df like object</a></li>
-  <li><a href="#from-an-existing-table-in-the-sparksession" id="toc-from-an-existing-table-in-the-sparksession" class="nav-link" data-scroll-target="#from-an-existing-table-in-the-sparksession">From an existing table in the SparkSession</a></li>
-  </ul></li>
-  <li><a href="#operations-on-spark-dataframes" id="toc-operations-on-spark-dataframes" class="nav-link" data-scroll-target="#operations-on-spark-dataframes">Operations on Spark DataFrames</a>
-  <ul class="collapse">
-  <li><a href="#transformations" id="toc-transformations" class="nav-link" data-scroll-target="#transformations">Transformations</a></li>
-  <li><a href="#actions" id="toc-actions" class="nav-link" data-scroll-target="#actions">Actions</a></li>
-  </ul></li>
+  <li><a href="#the-problem" id="toc-the-problem" class="nav-link active" data-scroll-target="#the-problem">The Problem</a></li>
+  <li><a href="#the-solution-use-environment-variables" id="toc-the-solution-use-environment-variables" class="nav-link" data-scroll-target="#the-solution-use-environment-variables">The Solution: Use Environment Variables</a></li>
   <li><a href="#conclusion" id="toc-conclusion" class="nav-link" data-scroll-target="#conclusion">Conclusion</a></li>
   </ul>
 </nav>
@@ -198,17 +187,18 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<h1 class="title">DataFrames in Spark: A Comprehensive Guide</h1>
+<h1 class="title">Solving Docker Bind Mount Path Errors in Airflow: Portable Solutions</h1>
   <div class="quarto-categories">
     <div class="quarto-category">data engineering</div>
-    <div class="quarto-category">spark</div>
-    <div class="quarto-category">dataframes</div>
+    <div class="quarto-category">docker</div>
+    <div class="quarto-category">airflow</div>
+    <div class="quarto-category">orchestration</div>
   </div>
   </div>
 
 <div>
   <div class="description">
-    A comprehensive guide to understanding and working with DataFrames in Apache Spark, including their benefits, operations.
+    How to use Docker in Docker (DinD) with Airflow to solve the mount path issue and enable seamless containerized task execution.
   </div>
 </div>
 
@@ -219,7 +209,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div>
     <div class="quarto-title-meta-heading">Published</div>
     <div class="quarto-title-meta-contents">
-      <p class="date">February 22, 2026</p>
+      <p class="date">March 5, 2026</p>
     </div>
   </div>
   
@@ -231,139 +221,123 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="what-is-a-spark-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="what-is-a-spark-dataframe">What is a Spark Dataframe?</h2>
-<p>Dataframes in Spark are structured and labelled data in two dimensions like a spreadsheet or table. Spark dataframes are built over Resilient Distributed Dataset (RDD) and therefore stored in several partitions.</p>
-<p>Spark Documentation describes Dataframe as</p>
-<blockquote class="blockquote">
-<p>“A DataFrame is a DataSet organized into named columns. It is conceptually equivalent to a table in a relational database or a dataframe in R/Python, but with richer optimizations under the hood.”</p>
-</blockquote>
+<p>Ever tried to run Docker commands inside an Airflow task? If you have, you might have encountered the infamous “bind source path does not exist”. This error occurs when you try to mount a directory from the host machine into a Docker container running as part of an Airflow task, but the path you specified does not exist on the host. This can be particularly tricky when using Docker in Docker (DinD) setups, where the Airflow container itself is running inside another Docker container.</p>
+<p>I recently built a containerized ETL pipeline where Airflow orchestrates extractor and loader containers every 15 minutes. Everything worked except this one critical piece: <strong>mounting host directories into the task containers</strong>. The Docker daemon kept complaining that paths didn’t exist, even though they were right there in the Airflow container.</p>
+<p>The core issue? <strong>The Docker daemon runs on the host, not inside containers.</strong> It needs host paths, not container paths. But how do you get host paths into your DAG without hardcoding?</p>
+<p>After much trial and error, I found a clean, portable solution using an environment variable and the <code>$PWD</code> trick. In this post, I’ll walk you through the problem, the false starts, and the final solution that lets your DAGs run anywhere.</p>
+<section id="the-problem" class="level2">
+<h2 class="anchored" data-anchor-id="the-problem">The Problem</h2>
+<p>I was orchestrating some tasks in my pipeline that required building and running Docker containers. My pipeline had multiple services a dbase, couple of apps, a custom network to connect everything. I wanted to use Airflow to manage the orchestration for development and testing. So i had a <code>DockerOperator</code> in my DAG that just run the database service and report it readiness. This <code>DockerOperator</code> had a couple of mounted volumes. For the sake of simplicity, let’s say, i have two tasks in my DAG as follows:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>write <span class="op">=</span> DockerOperator(</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /data/hello.txt'</span>],</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    volumes<span class="op">=</span>[<span class="st">'./data:/tmp/data'</span>],</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>So simply, this task just runs an <code>Alpine</code> container that writes a file to a mounted volume. the <code>data</code> directory in the current directory (project directory) is mounted to the <code>/tmp/data</code> address of the container.</p>
+<p>![]screenshot_scheule.png</p>
+<p>When the task is triggered, I got the following error in the logs:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Log</span> message source details sources=<span class="pp">[</span><span class="st">"/opt/airflow/logs/dag_id=test_write/run_id=manual__2026-03-05T11:56:15.919232+00:00/task_id=write_file/attempt=1.log"</span><span class="pp">]</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="ex">[2026-03-05</span> 12:56:16] INFO <span class="at">-</span> DAG bundles loaded: dags-folder</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a><span class="ex">[2026-03-05</span> 12:56:16] INFO <span class="at">-</span> Filling up the DagBag from /opt/airflow/dags/test.py</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="ex">[2026-03-05</span> 12:56:16] INFO <span class="at">-</span> Starting docker container from image alpine:latest</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="ex">[2026-03-05</span> 12:56:16] ERROR <span class="at">-</span> Task failed with exception</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a><span class="ex">APIError:</span> 400 Client Error for http+docker://localhost/v1.53/containers/create: Bad Request <span class="er">(</span><span class="st">"invalid mount config for type "</span><span class="ex">bind</span><span class="st">": invalid mount path: './data' mount path must be absolute"</span><span class="kw">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>So the error is pretty clear, the source mount path must be absolute. But this is where it is tricky. Because my absolute path to the source directory is not the same as anyone else who runs this pipeline. So how can we solve this issue?</p>
+<p>As a first step, I tried to dynamically obtain the absolute path from the DAG script and pass it to the <code>DockerOperator</code> as follows:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.providers.docker.operators.docker <span class="im">import</span> DockerOperator</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>default_args <span class="op">=</span> {</span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'start_date'</span>: datetime(<span class="dv">2026</span>, <span class="dv">3</span>, <span class="dv">1</span>),</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'auto_remove'</span>: <span class="st">'success'</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>host_path <span class="op">=</span> os.path.abspath(<span class="st">'./data'</span>)</span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(<span class="st">'test_write'</span>,</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    default_args <span class="op">=</span> default_args,</span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    schedule <span class="op">=</span> <span class="st">'@once'</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    catchup <span class="op">=</span> <span class="va">False</span>) <span class="im">as</span> dag:</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    write <span class="op">=</span> DockerOperator(</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /tmp/data/hello.txt'</span>],</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="st">'./data'</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                      target<span class="op">=</span><span class="st">'/tmp/data'</span>,</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">type</span> <span class="op">=</span> <span class="st">'bind'</span>)],</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>This however didn’t work because the script runs inside the Airflow container, so <code>os.path.abspath('./data')</code> returns <code>/opt/airflow/data</code> — a path that exists <strong>inside the container</strong> but not on the <strong>host</strong>. The Docker daemon, running on the host, needs the <strong>host’s absolute path</strong>, not the container’s path.</p>
 </section>
-<section id="features-of-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="features-of-dataframe">Features of DataFrame</h2>
-<p>Over traditional dataframes, Spark DataFrame offers the following features.</p>
-<ul>
-<li>Immutable: Spark dataframes are immutable and any transformation made on the dataframe result in creation of new dataframe.</li>
-<li>Lazy Evaluation: Spark dataframes are lazily evaluated. When a transformation is applied over a dataframe, an optimized execution plan is created and the execution is carried out only when an action is called.</li>
-<li>Optimized: Spark dataframe is a high level API of RDD and the executions are optimized (logical and physical). The detailed optimization can be read in this <a href="https://nbsmani.github.io/posts/2026-01-26-spark-query-optimization.html">article</a> .</li>
-<li>Fault Tolerant: Since the spark DataFrame are built over the RDD structure, they are inherently fault tolerant. When a node or partition fails, the replacement partition is recreated by tracking the lineage without restarting the process from scratch or stopping the process.</li>
-<li>Schema Aware: Spark dataframes hold defined datatypes and constraints for each column of the dataframe. It offers schema flexibility by supporting schema evolution and dynamic typing.</li>
-</ul>
-<p>One notable difference between a pandas dataframe and a spark DataFrame is that <code>pd.DataFrame</code> is index aware where as the records in the spark DataFrame are not indexed but stored as partitions, this is known as partition aware property.</p>
+<section id="the-solution-use-environment-variables" class="level2">
+<h2 class="anchored" data-anchor-id="the-solution-use-environment-variables">The Solution: Use Environment Variables</h2>
+<p>Using environment variables is a common way to pass dynamic values to your Airflow tasks. In this case, we can set an environment variable that contains the absolute path to the <code>data</code> directory on the host machine, and then use that environment variable in the <code>DockerOperator</code> to specify the mount path.</p>
+<p>The fist step is set environment variable in the Airflow container. This can be done by adding the following line to your <code>docker-compose.yml</code> file for the Airflow service:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">services</span><span class="kw">:</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="fu">airflow-manager</span><span class="kw">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">image</span><span class="kw">:</span><span class="at"> airflow-with-docker:latest</span><span class="co"> # This image was bult locally on the apache/airflow 3.0.0 with necessary modules  installed so that the container has access to `DockerOperator`.</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">environment</span><span class="kw">:</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">AIRFLOW__CORE__EXECUTOR</span><span class="kw">:</span><span class="at"> LocalExecutor</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="at">      ...</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="fu">HOST_PWD</span><span class="kw">:</span><span class="at"> $PWD</span><span class="co"> # &lt;- Set the environment variable to the current working directory on the host machine </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="at">      ...</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a><span class="at">    </span><span class="fu">volumes</span><span class="kw">:</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a><span class="at">      </span><span class="kw">-</span><span class="at"> ./data:/tmp/data</span><span class="co"> # &lt;- Mount the data directory to the Airflow container so that it can be accessed by the DockerOperator</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="at">    ...</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>There are <strong>two separate mounts</strong> at play here:</p>
+<ol type="1">
+<li><strong>docker-compose mount</strong>: <code>./data:/tmp/data</code> makes your host’s <code>./data</code> available to the Airflow container at <code>/tmp/data</code></li>
+<li><strong>DockerOperator mount</strong>: <code>source=f"{host_path}/data"</code> tells Docker daemon to mount the <strong>host’s</strong> <code>./data</code> to the task container at <code>/tmp/data</code></li>
+</ol>
+<p>The first mount ensures the Airflow container can see the data, but the Docker daemon ignores it. The second mount gives the actual task container access.</p>
+<p>Let’s modify our DAG to set an environment variable for the host path and then use it in the <code>DockerOperator</code>:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> os</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow <span class="im">import</span> DAG</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.providers.docker.operators.docker <span class="im">import</span> DockerOperator, Mount</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>default_args <span class="op">=</span> {</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'start_date'</span>: datetime(<span class="dv">2026</span>,<span class="dv">3</span>,<span class="dv">1</span>),</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'auto_remove'</span>: <span class="st">'success'</span>}</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>host_path <span class="op">=</span> os.environ.get(<span class="st">'HOST_PWD'</span>)</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(<span class="st">'test_write'</span>,</span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    default_args <span class="op">=</span> default_args,</span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    schedule <span class="op">=</span> <span class="st">'@once'</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    catchup <span class="op">=</span> <span class="va">False</span>) <span class="im">as</span> dag:</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    write <span class="op">=</span> DockerOperator(</span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /tmp/data/hello.txt'</span>],</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>host_path<span class="sc">}</span><span class="ss">/data"</span>, <span class="co"># &lt;- this will now be dynamically addressed and accessible</span></span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>                      target<span class="op">=</span><span class="st">'/tmp/data'</span>,</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">type</span> <span class="op">=</span> <span class="st">'bind'</span>)],</span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Upon running the DAG, the <code>DockerOperator</code> will now be able to access the <code>data</code> directory on the host machine through the environment variable, and the task should execute successfully without any mount path issues.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
-<p><img src="../assets/img/08-spark-dataframe-00.png" class="img-fluid figure-img"></p>
-<figcaption>AI summarized infographic of the features and operations of Spark DataFrames</figcaption>
+<p><img src="../assets/img/09-airflow-dag-suceess-01.png" class="img-fluid figure-img"></p>
+<figcaption>The DAG run successfully after fixing the host path mount problem</figcaption>
 </figure>
 </div>
-</section>
-<section id="creating-a-dataframe" class="level2">
-<h2 class="anchored" data-anchor-id="creating-a-dataframe">Creating a Dataframe</h2>
-<p>A dataframe can be created by the following 3 ways:</p>
-<section id="from-an-external-file" class="level3">
-<h3 class="anchored" data-anchor-id="from-an-external-file">From an external file</h3>
-<p>Spark offers several file formats such as csv, json, parquet, ORC, avro, hdfs.. Dataframe can be created from any of these sources using <code>spark.read.csv("file_path", args)</code> or <code>spark.read.format("format_name").load("file_path")</code> which is consistent for all the file formats.</p>
-</section>
-<section id="from-another-df-like-object" class="level3">
-<h3 class="anchored" data-anchor-id="from-another-df-like-object">From another df like object</h3>
-<p>Spark dataframes can also be created using traditional data containers such as list of dictionaries / tuples or from pandas DataFrame object. This can be done using <code>spark.createDataFrame(df_name)</code></p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co">#create a SparkSession</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">"EmployeeDataFrame"</span>).getOrCreate()</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>employees <span class="op">=</span> [</span>
-<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"John D."</span>, <span class="st">"age"</span>: <span class="dv">30</span>, <span class="st">"department"</span>: <span class="st">"HR"</span>},</span>
-<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"Alice G."</span>, <span class="st">"age"</span>: <span class="dv">25</span>, <span class="st">"department"</span>: <span class="st">"Finance"</span>},</span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"Bob T."</span>, <span class="st">"age"</span>: <span class="dv">35</span>, <span class="st">"department"</span>: <span class="st">"IT"</span>},</span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>  {<span class="st">"name"</span>: <span class="st">"Eve A."</span>, <span class="st">"age"</span>: <span class="dv">28</span>, <span class="st">"department"</span>: <span class="st">"Marketing"</span>}</span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>]</span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.createDataFrame(employees)</span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Select only the name and age columns</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>new_df <span class="op">=</span> df.select(<span class="st">"name"</span>, <span class="st">"age"</span>)</span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="co">#Since DataFrame is lazily evaluated, we need to call an explicit action to see the results.</span></span>
-<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-18"><a href="#cb1-18" aria-hidden="true" tabindex="-1"></a>new_df.show()</span>
-<span id="cb1-19"><a href="#cb1-19" aria-hidden="true" tabindex="-1"></a><span class="op">+-------+---+</span></span>
-<span id="cb1-20"><a href="#cb1-20" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>   name<span class="op">|</span>age<span class="op">|</span></span>
-<span id="cb1-21"><a href="#cb1-21" aria-hidden="true" tabindex="-1"></a><span class="op">+-------</span> <span class="op">+---+</span></span>
-<span id="cb1-22"><a href="#cb1-22" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>John D. <span class="op">|</span> <span class="dv">30</span><span class="op">|</span></span>
-<span id="cb1-23"><a href="#cb1-23" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Alice G.<span class="op">|</span> <span class="dv">25</span><span class="op">|</span></span>
-<span id="cb1-24"><a href="#cb1-24" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>  Bob T.<span class="op">|</span> <span class="dv">35</span><span class="op">|</span></span>
-<span id="cb1-25"><a href="#cb1-25" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>  Eve A.<span class="op">|</span> <span class="dv">28</span><span class="op">|</span></span>
-<span id="cb1-26"><a href="#cb1-26" aria-hidden="true" tabindex="-1"></a><span class="op">+-------+---+</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-<section id="from-an-existing-table-in-the-sparksession" class="level3">
-<h3 class="anchored" data-anchor-id="from-an-existing-table-in-the-sparksession">From an existing table in the SparkSession</h3>
-<p>If there is a named table available in the <code>SparkSession</code>, it can be read as a DataFrame using <code>read.table()</code> method. For example, lets assume a <code>sales</code> table is available in the SparkSession</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#create a SparkSession</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> pyspark.sql <span class="im">import</span> SparkSession</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>spark <span class="op">=</span> SparkSession.builder.appName(<span class="st">"Sales"</span>).getOrCreate()</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.read.table(<span class="st">"sales"</span>)</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>df.show()</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="co">#this will show the existing SQL table now stored as a Spark DataFrame</span></span>
-<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="op">+---------+----------+------+--------+--------------+</span></span>
-<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> category<span class="op">|</span>    price<span class="op">|</span>product<span class="op">|</span>quantity<span class="op">|</span>  salesperson<span class="op">|</span></span>
-<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a><span class="op">+---------+----------+------+--------+--------------+</span></span>
-<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Electronics<span class="op">|</span>   <span class="fl">1200.5</span><span class="op">|</span> Laptop<span class="op">|</span>       <span class="dv">5</span><span class="op">|</span>   John Smith<span class="op">|</span></span>
-<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Electronics<span class="op">|</span>    <span class="fl">25.99</span><span class="op">|</span>  Mouse<span class="op">|</span>      <span class="dv">20</span><span class="op">|</span>  Alice Brown<span class="op">|</span></span>
-<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Furniture<span class="op">|</span>    <span class="fl">350.0</span><span class="op">|</span>   Desk<span class="op">|</span>       <span class="dv">3</span><span class="op">|</span>  Bob Johnson<span class="op">|</span></span>
-<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Furniture<span class="op">|</span>    <span class="fl">175.5</span><span class="op">|</span>  Chair<span class="op">|</span>       <span class="dv">8</span><span class="op">|</span>    Eve Davis<span class="op">|</span></span>
-<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Stationery<span class="op">|</span>     <span class="fl">4.99</span><span class="op">|</span>Notebook<span class="op">|</span>     <span class="dv">100</span><span class="op">|</span>   John Smith<span class="op">|</span></span>
-<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Stationery<span class="op">|</span>     <span class="fl">1.99</span><span class="op">|</span>     Pen<span class="op">|</span>     <span class="dv">200</span><span class="op">|</span>  Alice Brown<span class="op">|</span></span>
-<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="op">|</span>Electronics<span class="op">|</span>    <span class="fl">450.0</span><span class="op">|</span>Monitor<span class="op">|</span>       <span class="dv">4</span><span class="op">|</span>  Bob Johnson<span class="op">|</span></span>
-<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a><span class="op">|</span> Furniture<span class="op">|</span>    <span class="fl">280.0</span><span class="op">|</span>Bookshelf<span class="op">|</span>      <span class="dv">2</span><span class="op">|</span>    Eve Davis<span class="op">|</span></span>
-<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a><span class="op">+---------+----------+------+--------+--------------+</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<section id="alternate-methods-to-read-a-table" class="level4">
-<h4 class="anchored" data-anchor-id="alternate-methods-to-read-a-table">Alternate methods to read a table</h4>
-<p>The table can also be read using a shorter <code>table()</code> or<code>sql()</code> function to store the output of a SQL query as DataFrame()</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">##reading using `table()`</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.table(<span class="st">"sales"</span>)</span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="co">## Storing the output of a SQL query as a Spark DataFrame</span></span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> spark.sql(<span class="st">"SELECT * FROM sales"</span> )</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
-</section>
-<section id="operations-on-spark-dataframes" class="level2">
-<h2 class="anchored" data-anchor-id="operations-on-spark-dataframes">Operations on Spark DataFrames</h2>
-<p>RDDs (thus Spark DataFrames) supports the following two types of operations</p>
-<ul>
-<li>Transformations</li>
-<li>Actions</li>
-</ul>
-<section id="transformations" class="level3">
-<h3 class="anchored" data-anchor-id="transformations">Transformations</h3>
-<p>Transformations create a new dataset from existing one In principle, the transformations are lazily evaluated. Once a transformation is called, a Directed Acyclic Graph (DAG) is built but it is not executed until an action is called. The following are some examples of transformations <code>map()</code>, <code>filter()</code>, <code>sample()</code>,<code>distinct()</code> <code>union()</code> <code>join()</code>, <code>repartition()</code></p>
-</section>
-<section id="actions" class="level3">
-<h3 class="anchored" data-anchor-id="actions">Actions</h3>
-<p>Action returns the evaluated result of the computation on the dataset to the driver program and to the user. The following are some examples of actions <code>count()</code>,<code>first()</code>,<code>collect()</code>, <code>show()</code></p>
-<section id="common-operations" class="level4">
-<h4 class="anchored" data-anchor-id="common-operations">Common Operations</h4>
-<p>Here is an example of common operations on Spark DataFrame</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">### Common DataFrame Operations</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Once you have a DataFrame `df`, you can perform various transformations and actions:</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Filtering</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>filtered_df <span class="op">=</span> df.<span class="bu">filter</span>(df.age <span class="op">&gt;</span> <span class="dv">28</span>)</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Adding columns</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>df_with_tax <span class="op">=</span> df.withColumn(<span class="st">"tax"</span>, df.price <span class="op">*</span> <span class="fl">0.1</span>)</span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Aggregations</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>df.groupBy(<span class="st">"department"</span>).avg(<span class="st">"age"</span>).show()</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-</section>
-</section>
+<p>We can also verify that the file was created successfully by checking the contents of the <code>data</code> directory on the host machine:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb6"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="ex">$</span> cat ./data/hello.txt</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Hello</span> from Airflow!</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="conclusion" class="level2">
 <h2 class="anchored" data-anchor-id="conclusion">Conclusion</h2>
-<p>Spark DataFrames are a powerful and flexible way to work with structured data in Apache Spark. They provide a high-level API for working with data, while also offering the performance and scalability benefits of Spark’s underlying RDD structure. By understanding how to create and manipulate DataFrames, one can unlock the full potential of Spark for the data processing needs.</p>
+<p>Using environment variables is a powerful way to pass dynamic values to your Airflow tasks, especially when dealing with Docker in Docker scenarios. By setting an environment variable for the host path and using it in the <code>DockerOperator</code>, we can solve the mount path issue and enable seamless containerized task execution within Airflow. This approach allows for greater flexibility and portability of your Airflow DAGs across different environments.</p>
 
 
 </section>
