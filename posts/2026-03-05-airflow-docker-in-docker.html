@@ -193,6 +193,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
     <div class="quarto-category">docker</div>
     <div class="quarto-category">airflow</div>
     <div class="quarto-category">orchestration</div>
+    <div class="quarto-category">airflow v3.0.0</div>
   </div>
   </div>
 
@@ -229,14 +230,19 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="the-problem">The Problem</h2>
 <p>I was orchestrating some tasks in my pipeline that required building and running Docker containers. My pipeline had multiple services a dbase, couple of apps, a custom network to connect everything. I wanted to use Airflow to manage the orchestration for development and testing. So i had a <code>DockerOperator</code> in my DAG that just run the database service and report it readiness. This <code>DockerOperator</code> had a couple of mounted volumes. For the sake of simplicity, let’s say, i have two tasks in my DAG as follows:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a>write <span class="op">=</span> DockerOperator(</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    task_id<span class="op">=</span><span class="st">'test_write'</span>,</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>    image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a>    command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /data/hello.txt'</span>],</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    volumes<span class="op">=</span>[<span class="st">'./data:/tmp/data'</span>],</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a>    mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="st">'./data'</span>, target<span class="op">=</span><span class="st">'/tmp/data'</span>, <span class="bu">type</span><span class="op">=</span><span class="st">'bind'</span>)],</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    dag<span class="op">=</span>dag</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>So simply, this task just runs an <code>Alpine</code> container that writes a file to a mounted volume. the <code>data</code> directory in the current directory (project directory) is mounted to the <code>/tmp/data</code> address of the container.</p>
-<p>![]screenshot_scheule.png</p>
+<p>So simply, this task is designed just to run an <code>Alpine</code> container that writes a file to a mounted volume. The <code>data</code> sub-directory in the current directory (project directory) is mounted to the <code>/tmp/data</code> address of the container.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="../assets/img/09-airflow-test-write-00.png" class="img-fluid figure-img"></p>
+<figcaption>The task it scheduled successfully in the DAG seen in the Airflow UI</figcaption>
+</figure>
+</div>
 <p>When the task is triggered, I got the following error in the logs:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a><span class="ex">Log</span> message source details sources=<span class="pp">[</span><span class="st">"/opt/airflow/logs/dag_id=test_write/run_id=manual__2026-03-05T11:56:15.919232+00:00/task_id=write_file/attempt=1.log"</span><span class="pp">]</span></span>
@@ -253,27 +259,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a><span class="co">#define default args for the DAG</span></span>
 <span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>default_args <span class="op">=</span> {</span>
 <span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'start_date'</span>: datetime(<span class="dv">2026</span>, <span class="dv">3</span>, <span class="dv">1</span>),</span>
 <span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="st">'auto_remove'</span>: <span class="st">'success'</span></span>
 <span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>}</span>
 <span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>host_path <span class="op">=</span> os.path.abspath(<span class="st">'./data'</span>)</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(<span class="st">'test_write'</span>,</span>
-<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>    default_args <span class="op">=</span> default_args,</span>
-<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>    schedule <span class="op">=</span> <span class="st">'@once'</span>,</span>
-<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    catchup <span class="op">=</span> <span class="va">False</span>) <span class="im">as</span> dag:</span>
-<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    write <span class="op">=</span> DockerOperator(</span>
-<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
-<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
-<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /tmp/data/hello.txt'</span>],</span>
-<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="st">'./data'</span>,</span>
-<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>                      target<span class="op">=</span><span class="st">'/tmp/data'</span>,</span>
-<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">type</span> <span class="op">=</span> <span class="st">'bind'</span>)],</span>
-<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="co">#Dynamically get the absolute path to the data directory</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>host_path <span class="op">=</span> os.path.abspath(<span class="st">'./data'</span>)</span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="co">#Compose the DAG</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(<span class="st">'test_write'</span>,</span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>    default_args <span class="op">=</span> default_args,</span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    schedule <span class="op">=</span> <span class="st">'@once'</span>,</span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    catchup <span class="op">=</span> <span class="va">False</span>) <span class="im">as</span> dag:</span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>    write <span class="op">=</span> DockerOperator(</span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>        command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /tmp/data/hello.txt'</span>],</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="st">'./data'</span>,</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>                      target<span class="op">=</span><span class="st">'/tmp/data'</span>,</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">type</span> <span class="op">=</span> <span class="st">'bind'</span>)],</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag)</span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co">#execute the task</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>write</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>This however didn’t work because the script runs inside the Airflow container, so <code>os.path.abspath('./data')</code> returns <code>/opt/airflow/data</code> — a path that exists <strong>inside the container</strong> but not on the <strong>host</strong>. The Docker daemon, running on the host, needs the <strong>host’s absolute path</strong>, not the container’s path.</p>
 </section>
 <section id="the-solution-use-environment-variables" class="level2">
@@ -303,27 +314,32 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> airflow.providers.docker.operators.docker <span class="im">import</span> DockerOperator, Mount</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> datetime <span class="im">import</span> datetime</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>default_args <span class="op">=</span> {</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="st">'start_date'</span>: datetime(<span class="dv">2026</span>,<span class="dv">3</span>,<span class="dv">1</span>),</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'auto_remove'</span>: <span class="st">'success'</span>}</span>
-<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a><span class="co">#Define default args for the DAG</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>default_args <span class="op">=</span> {</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="st">'start_date'</span>: datetime(<span class="dv">2026</span>,<span class="dv">3</span>,<span class="dv">1</span>),</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="st">'auto_remove'</span>: <span class="st">'success'</span>}</span>
 <span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>host_path <span class="op">=</span> os.environ.get(<span class="st">'HOST_PWD'</span>)</span>
-<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(<span class="st">'test_write'</span>,</span>
-<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a>    default_args <span class="op">=</span> default_args,</span>
-<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a>    schedule <span class="op">=</span> <span class="st">'@once'</span>,</span>
-<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    catchup <span class="op">=</span> <span class="va">False</span>) <span class="im">as</span> dag:</span>
-<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a>    write <span class="op">=</span> DockerOperator(</span>
-<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
-<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
-<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /tmp/data/hello.txt'</span>],</span>
-<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>host_path<span class="sc">}</span><span class="ss">/data"</span>, <span class="co"># &lt;- this will now be dynamically addressed and accessible</span></span>
-<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>                      target<span class="op">=</span><span class="st">'/tmp/data'</span>,</span>
-<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">type</span> <span class="op">=</span> <span class="st">'bind'</span>)],</span>
-<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag)</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a><span class="co">#Obtain the host path from the environment variable</span></span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>host_path <span class="op">=</span> os.environ.get(<span class="st">'HOST_PWD'</span>)</span>
+<span id="cb5-13"><a href="#cb5-13" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-14"><a href="#cb5-14" aria-hidden="true" tabindex="-1"></a><span class="co">#Compose the DAG</span></span>
+<span id="cb5-15"><a href="#cb5-15" aria-hidden="true" tabindex="-1"></a><span class="cf">with</span> DAG(<span class="st">'test_write'</span>,</span>
+<span id="cb5-16"><a href="#cb5-16" aria-hidden="true" tabindex="-1"></a>    default_args <span class="op">=</span> default_args,</span>
+<span id="cb5-17"><a href="#cb5-17" aria-hidden="true" tabindex="-1"></a>    schedule <span class="op">=</span> <span class="st">'@once'</span>,</span>
+<span id="cb5-18"><a href="#cb5-18" aria-hidden="true" tabindex="-1"></a>    catchup <span class="op">=</span> <span class="va">False</span>) <span class="im">as</span> dag:</span>
+<span id="cb5-19"><a href="#cb5-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-20"><a href="#cb5-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-21"><a href="#cb5-21" aria-hidden="true" tabindex="-1"></a>    write <span class="op">=</span> DockerOperator(</span>
+<span id="cb5-22"><a href="#cb5-22" aria-hidden="true" tabindex="-1"></a>        task_id<span class="op">=</span><span class="st">'write_file'</span>,</span>
+<span id="cb5-23"><a href="#cb5-23" aria-hidden="true" tabindex="-1"></a>        image<span class="op">=</span><span class="st">'alpine:latest'</span>,</span>
+<span id="cb5-24"><a href="#cb5-24" aria-hidden="true" tabindex="-1"></a>        command<span class="op">=</span>[<span class="st">'sh'</span>, <span class="st">'-c'</span>, <span class="st">'echo "Hello from Airflow!" &gt; /tmp/data/hello.txt'</span>],</span>
+<span id="cb5-25"><a href="#cb5-25" aria-hidden="true" tabindex="-1"></a>        mounts<span class="op">=</span>[Mount(source<span class="op">=</span><span class="ss">f"</span><span class="sc">{</span>host_path<span class="sc">}</span><span class="ss">/data"</span>, <span class="co"># &lt;- this will now be dynamically addressed and accessible</span></span>
+<span id="cb5-26"><a href="#cb5-26" aria-hidden="true" tabindex="-1"></a>                      target<span class="op">=</span><span class="st">'/tmp/data'</span>,</span>
+<span id="cb5-27"><a href="#cb5-27" aria-hidden="true" tabindex="-1"></a>                      <span class="bu">type</span> <span class="op">=</span> <span class="st">'bind'</span>)],</span>
+<span id="cb5-28"><a href="#cb5-28" aria-hidden="true" tabindex="-1"></a>        dag<span class="op">=</span>dag)</span>
+<span id="cb5-29"><a href="#cb5-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-30"><a href="#cb5-30" aria-hidden="true" tabindex="-1"></a><span class="co">#Execute the task</span></span>
+<span id="cb5-31"><a href="#cb5-31" aria-hidden="true" tabindex="-1"></a>write</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Upon running the DAG, the <code>DockerOperator</code> will now be able to access the <code>data</code> directory on the host machine through the environment variable, and the task should execute successfully without any mount path issues.</p>
 <div class="quarto-figure quarto-figure-center">
 <figure class="figure">
