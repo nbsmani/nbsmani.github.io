@@ -2,7 +2,7 @@
 layout: post
 title: "Solving Docker Bind Mount Path Errors in Airflow: Portable Solutions"
 date: 2026-03-05
-categories: [data engineering,docker,airflow, orchestration]
+categories: [data engineering,docker,airflow, orchestration,airflow v3.0.0]
 description: "How to use Docker in Docker (DinD) with Airflow to solve the mount path issue and enable seamless containerized task execution."
 execute:
   eval: false
@@ -22,17 +22,17 @@ I was orchestrating some tasks in my pipeline that required building and running
 
 ```python
 write = DockerOperator(
-    task_id='write_file',
+    task_id='test_write',
     image='alpine:latest',
     command=['sh', '-c', 'echo "Hello from Airflow!" > /data/hello.txt'],
-    volumes=['./data:/tmp/data'],
+    mounts=[Mount(source='./data', target='/tmp/data', type='bind')],
     dag=dag
 )
 ```
 
-So simply, this task just runs an `Alpine` container that writes a file to a mounted volume. the `data` directory in the current directory (project directory) is mounted to the `/tmp/data` address of the container.
+So simply, this task is designed just to run an `Alpine` container that writes a file to a mounted volume. The `data` sub-directory in the current directory (project directory) is mounted to the `/tmp/data` address of the container.
 
-![]screenshot_scheule.png
+![The task it scheduled successfully in the DAG seen in the Airflow UI](../assets/img/09-airflow-test-write-00.png)
 
 When the task is triggered, I got the following error in the logs:
 
@@ -57,14 +57,16 @@ from airflow.providers.docker.operators.docker import DockerOperator
 from datetime import datetime
 
 
-
+#define default args for the DAG
 default_args = {
     'start_date': datetime(2026, 3, 1),
     'auto_remove': 'success'
 }
 
+#Dynamically get the absolute path to the data directory
 host_path = os.path.abspath('./data')
 
+#Compose the DAG
 with DAG('test_write',
 	default_args = default_args,
 	schedule = '@once',
@@ -79,6 +81,8 @@ with DAG('test_write',
 					  type = 'bind')],
 		dag=dag)
 
+#execute the task
+write
 ```
 
  This however didn't work because the script runs inside the Airflow container, so `os.path.abspath('./data')` returns `/opt/airflow/data` — a path that exists **inside the container** but not on the **host**. The Docker daemon, running on the host, needs the **host's absolute path**, not the container's path.
@@ -120,13 +124,15 @@ from airflow import DAG
 from airflow.providers.docker.operators.docker import DockerOperator, Mount
 from datetime import datetime
 
+#Define default args for the DAG
 default_args = {
 	'start_date': datetime(2026,3,1),
 	'auto_remove': 'success'}
 
-
+#Obtain the host path from the environment variable
 host_path = os.environ.get('HOST_PWD')
 
+#Compose the DAG
 with DAG('test_write',
 	default_args = default_args,
 	schedule = '@once',
@@ -141,6 +147,10 @@ with DAG('test_write',
 					  target='/tmp/data',
 					  type = 'bind')],
 		dag=dag)
+
+#Execute the task
+write
+
 ```
 
 Upon running the DAG, the `DockerOperator` will now be able to access the `data` directory on the host machine through the environment variable, and the task should execute successfully without any mount path issues.
