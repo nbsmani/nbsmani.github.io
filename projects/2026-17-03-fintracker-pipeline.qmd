@@ -1,0 +1,63 @@
+---
+layout: post
+title: "Realtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture"
+date: 2026-03-17
+categories: [docker, data engineering, python, apache-airflow, postgresql, medallion-architecture]
+description: " A modern, containerized ETL pipeline that collects real-time commodity and cryptocurrency prices, applies the Medallion Architecture (Bronze → Silver → Gold), and prepares clean, analytics-ready data."
+execute:
+  eval: false
+---
+
+Data is pulled from the [Gold API](https://gold-api.com/). This API is a Free endpoint with no rate limits. The extracted data is stored in PostgreSQL with full auditability and idempotency. The data is pulled once in 15 minutes for demonstration. Time interval of the extraction can be customized in the airflow DAG.
+
+
+[![Python](https://img.shields.io/badge/Python-3.10%2B-3776AB?style=flat&logo=python&logoColor=white)](https://www.python.org/)
+[![Pandas](https://img.shields.io/badge/Pandas-150458?style=flat&logo=pandas&logoColor=white)](https://pandas.pydata.org/)
+[![SQLAlchemy](https://img.shields.io/badge/SQLAlchemy-3776AB?style=flat&logo=python&logoColor=white)](https://www.sqlalchemy.org/) <!-- Using Python logo as SQLAlchemy doesn't have a dedicated simple icon -->
+[![Apache Airflow](https://img.shields.io/badge/Apache%20Airflow-017CEE?style=flat&logo=Apache%20Airflow&logoColor=white)](https://airflow.apache.org/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=flat&logo=postgresql&logoColor=white)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-2496ED?style=flat&logo=docker&logoColor=white)](https://www.docker.com/)
+
+
+
+![Schema of the pipeline](../assets/img/p01-fintracker-pipeline-00.png)
+
+## ✨ Description
+
+
+- Designed and built an end-to-end ETL pipeline that fetches live commodity and cryptocurrency prices (Gold, Silver, Bitcoin, Ethereum) every 15 minutes using Apache Airflow, Docker, and PostgreSQL
+
+- Implemented medallion architecture with three data layers:
+
+ - Bronze Layer: Raw API data with UUID batch tracking for complete data lineage and idempotent processing
+
+ - Silver Layer: Cleaned, typed, and deduplicated data using PostgreSQL stored procedures
+
+ - Gold Layer: Analytics-ready star schema with dimension and fact tables optimized for BI queries
+
+- Containerized the entire stack with Docker Compose, orchestrating 5+ services including Airflow scheduler, PostgreSQL databases, and custom Python extractor/loader containers
+
+- Solved concurrency challenges by implementing max_active_runs=1 and retry logic, eliminating "tuple concurrently updated" errors in PostgreSQL
+
+- Automated file archival with date-partitioned directory structure, enabling efficient historical backfill and reprocessing of data
+
+- Built idempotent load patterns using UUID-based deduplication, ensuring no duplicate records even during pipeline reruns.
+
+- Wrote comprehensive documentation including architecture diagrams, setup instructions, and troubleshooting guides for reproducibility
+
+
+## 🏗 Skills Demonstrated
+
+Apache Airflow | Docker | PostgreSQL | Python | Pandas | SQLAlchemy | REST API Integration | Medallion Architecture | ETL Design | Data Warehousing
+
+## 🚀 Key Achievements
+
+- Reduced duplicate records to zero through UUID batch tracking
+
+- Achieved 100% idempotent processing across all pipeline runs
+
+- Successfully processed 7+ symbols with 15-minute cadence, 24/7
+
+## Repository and Documentation
+
+[GitHub Repository](https://github.com/nbsmani/fintrackerETLpipeline)
