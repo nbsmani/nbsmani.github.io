@@ -182,18 +182,11 @@
     "text": "This page serves my projects that I have worked on. These projects are a mix of personal and professional work, showcasing my skills in data engineering, distributed systems, and software development. Each project includes a brief description, the technologies used, and links to the code repositories or live demos where applicable."
   },
   {
-    "objectID": "projects/index.html#description",
-    "href": "projects/index.html#description",
+    "objectID": "projects/index.html#latest-projects",
+    "href": "projects/index.html#latest-projects",
     "title": "Project Portfolio",
-    "section": "",
-    "text": "This page serves my projects that I have worked on. These projects are a mix of personal and professional work, showcasing my skills in data engineering, distributed systems, and software development. Each project includes a brief description, the technologies used, and links to the code repositories or live demos where applicable."
-  },
-  {
-    "objectID": "projects/index.html#latest-posts",
-    "href": "projects/index.html#latest-posts",
-    "title": "Project Portfolio",
-    "section": "Latest Posts",
-    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nRealtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture\n\n\n\ndocker\n\ndata engineering\n\npython\n\napache-airflow\n\npostgresql\n\nmedallion-architecture\n\n\n\nA modern, containerized ETL pipeline that collects real-time commodity and cryptocurrency prices, applies the Medallion Architecture (Bronze → Silver → Gold), and prepares clean, analytics-ready data.\n\n\n\n\n\nMar 17, 2026\n\n\n\n\n\nNo matching items\n\n← Back to Home"
+    "section": "Latest Projects",
+    "text": "Latest Projects\n\n\n\n\n\n\n\n\n\n\nRealtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture\n\n\n\ndocker\n\ndata engineering\n\npython\n\napache-airflow\n\npostgresql\n\nmedallion-architecture\n\n\n\nA modern, containerized ETL pipeline that collects real-time commodity and cryptocurrency prices, applies the Medallion Architecture (Bronze → Silver → Gold), and prepares clean, analytics-ready data.\n\n\n\n\n\nMar 17, 2026\n\n\n\n\n\nNo matching items\n\n← Back to Home"
   },
   {
     "objectID": "posts/index.html",
