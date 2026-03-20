@@ -10,11 +10,9 @@ listing:
   page-size: 10 
 ---
 
-## Description
-
 This page serves my projects that I have worked on. These projects are a mix of personal and professional work, showcasing my skills in data engineering, distributed systems, and software development. Each project includes a brief description, the technologies used, and links to the code repositories or live demos where applicable.
 
-## Latest Posts
+## Latest Projects
 
 :::{#listing}
 :::
