@@ -1,5 +1,11 @@
 [
   {
+    "listing": "/projects/index.html",
+    "items": [
+      "/projects/2026-17-03-fintracker-pipeline.html"
+    ]
+  },
+  {
     "listing": "/posts/index.html",
     "items": [
       "/posts/2026-03-05-airflow-docker-in-docker.html",

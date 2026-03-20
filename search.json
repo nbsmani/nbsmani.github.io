@@ -126,11 +126,39 @@
     "text": "Why Does This Happen?\n\nThe Two-Phase Network Problem\n\nBuild Phase: During docker build, Docker uses your host’s DNS configuration. That’s why pip install (which needs to resolve pypi.org) works fine.\nRun Phase: When docker run executes, the container starts with Docker’s default networking setup, which may not include functional DNS servers. Your script tries to resolve api.gold-api.com, fails, and throws a ConnectionError.\n\n\n\nUnderstanding Docker’s Default DNS Behavior\nBy default, Docker containers use the host’s DNS settings. However, in some configurations (especially on Linux without systemd-resolved or with certain network managers), this inheritance breaks down. The container ends up with an empty /etc/resolv.conf or one pointing to a non-existent DNS server."
   },
   {
-    "objectID": "projects/index.html",
-    "href": "projects/index.html",
-    "title": "Project Portfolio",
+    "objectID": "projects/2026-17-03-fintracker-pipeline.html",
+    "href": "projects/2026-17-03-fintracker-pipeline.html",
+    "title": "Realtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture",
     "section": "",
-    "text": "This section is being updated. In the meantime, please feel free to checkout my github. Thank you for your visit."
+    "text": "Data is pulled from the Gold API. This API is a Free endpoint with no rate limits. The extracted data is stored in PostgreSQL with full auditability and idempotency. The data is pulled once in 15 minutes for demonstration. Time interval of the extraction can be customized in the airflow DAG."
+  },
+  {
+    "objectID": "projects/2026-17-03-fintracker-pipeline.html#description",
+    "href": "projects/2026-17-03-fintracker-pipeline.html#description",
+    "title": "Realtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture",
+    "section": "✨ Description",
+    "text": "✨ Description\n\nDesigned and built an end-to-end ETL pipeline that fetches live commodity and cryptocurrency prices (Gold, Silver, Bitcoin, Ethereum) every 15 minutes using Apache Airflow, Docker, and PostgreSQL\nImplemented medallion architecture with three data layers:\nBronze Layer: Raw API data with UUID batch tracking for complete data lineage and idempotent processing\nSilver Layer: Cleaned, typed, and deduplicated data using PostgreSQL stored procedures\nGold Layer: Analytics-ready star schema with dimension and fact tables optimized for BI queries\nContainerized the entire stack with Docker Compose, orchestrating 5+ services including Airflow scheduler, PostgreSQL databases, and custom Python extractor/loader containers\nSolved concurrency challenges by implementing max_active_runs=1 and retry logic, eliminating “tuple concurrently updated” errors in PostgreSQL\nAutomated file archival with date-partitioned directory structure, enabling efficient historical backfill and reprocessing of data\nBuilt idempotent load patterns using UUID-based deduplication, ensuring no duplicate records even during pipeline reruns.\nWrote comprehensive documentation including architecture diagrams, setup instructions, and troubleshooting guides for reproducibility"
+  },
+  {
+    "objectID": "projects/2026-17-03-fintracker-pipeline.html#skills-demonstrated",
+    "href": "projects/2026-17-03-fintracker-pipeline.html#skills-demonstrated",
+    "title": "Realtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture",
+    "section": "🏗 Skills Demonstrated",
+    "text": "🏗 Skills Demonstrated\nApache Airflow | Docker | PostgreSQL | Python | Pandas | SQLAlchemy | REST API Integration | Medallion Architecture | ETL Design | Data Warehousing"
+  },
+  {
+    "objectID": "projects/2026-17-03-fintracker-pipeline.html#key-achievements",
+    "href": "projects/2026-17-03-fintracker-pipeline.html#key-achievements",
+    "title": "Realtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture",
+    "section": "🚀 Key Achievements",
+    "text": "🚀 Key Achievements\n\nReduced duplicate records to zero through UUID batch tracking\nAchieved 100% idempotent processing across all pipeline runs\nSuccessfully processed 7+ symbols with 15-minute cadence, 24/7"
+  },
+  {
+    "objectID": "projects/2026-17-03-fintracker-pipeline.html#repository-and-documentation",
+    "href": "projects/2026-17-03-fintracker-pipeline.html#repository-and-documentation",
+    "title": "Realtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture",
+    "section": "Repository and Documentation",
+    "text": "Repository and Documentation\nGitHub Repository"
   },
   {
     "objectID": "index.html",
@@ -145,6 +173,27 @@
     "title": "Welcome to My Personal Website",
     "section": "",
     "text": "I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems.\nThis site serves as my personal portfolio and blog where I share my learnings and projects.\n\n\n\n\nBrowse my latest articles\n\nExplore →\n\n\n\n\nExplore my projects\n\nExplore →"
+  },
+  {
+    "objectID": "projects/index.html",
+    "href": "projects/index.html",
+    "title": "Project Portfolio",
+    "section": "",
+    "text": "This page serves my projects that I have worked on. These projects are a mix of personal and professional work, showcasing my skills in data engineering, distributed systems, and software development. Each project includes a brief description, the technologies used, and links to the code repositories or live demos where applicable."
+  },
+  {
+    "objectID": "projects/index.html#description",
+    "href": "projects/index.html#description",
+    "title": "Project Portfolio",
+    "section": "",
+    "text": "This page serves my projects that I have worked on. These projects are a mix of personal and professional work, showcasing my skills in data engineering, distributed systems, and software development. Each project includes a brief description, the technologies used, and links to the code repositories or live demos where applicable."
+  },
+  {
+    "objectID": "projects/index.html#latest-posts",
+    "href": "projects/index.html#latest-posts",
+    "title": "Project Portfolio",
+    "section": "Latest Posts",
+    "text": "Latest Posts\n\n\n\n\n\n\n\n\n\n\nRealtime Commodity and Cryptocurrency Price Tracker (ETL/ELT) Pipeline with Medallion Architecture\n\n\n\ndocker\n\ndata engineering\n\npython\n\napache-airflow\n\npostgresql\n\nmedallion-architecture\n\n\n\nA modern, containerized ETL pipeline that collects real-time commodity and cryptocurrency prices, applies the Medallion Architecture (Bronze → Silver → Gold), and prepares clean, analytics-ready data.\n\n\n\n\n\nMar 17, 2026\n\n\n\n\n\nNo matching items\n\n← Back to Home"
   },
   {
     "objectID": "posts/index.html",
