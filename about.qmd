@@ -14,13 +14,13 @@ about:
       href: https://github.com/nbsmani
 
 ---
-As a highly motivated Data Engineer, I am dedicated to driving value and innovation within the organizations I collaborate with. Senior Data Engineer with a PhD in Engineering Sciences and 8+ years of experience designing and deploying scalable, containerized data pipelines into production. Expert in Python, SQL, PySpark, and modern orchestration (Airflow) and infrastructure
-(Docker, AWS) tools. Proven ability to architect full data lifecycle solutions from distributed processing on HPC/Spark clusters to workflow automation and cloud storage ensuring data integrity, reproducibility, and performance. Seeking to apply deep systems-
-engineering expertise to data infrastructure challenges in the tech industry. I am committed to delivering high-performance outcomes while pursuing personal and professional growth in a dynamic, results-driven environment.
 
-- **Big Data Technologies**: Spark, Kafka
-- **Cloud Platforms**: AWS, GCP, Azure
-- **Containerization**: Docker, Kubernetes
-- **Languages**: Python, SQL,R
+PhD-trained Data Scientist & ML Engineer with 8+ years building production-grade data pipelines and applied ML models.
 
-I enjoy solving complex data problems and optimizing performance for large-scale applications.
+My career spans engineering and computational biology - giving me a rare mix of statistical rigor (PhD) and engineering discipline (Docker, AWS, Git, modular pipelines). I've built end-to-end pipelines for multi-terabyte datasets, developed predictive models, and delivered insights to cross-functional teams.
+
+**Core toolkit:** Python, SQL, Machine Learning (scikit-learn, XGBoost), Docker, AWS, Git, MLOps fundamentals  
+**Databricks Certified**  
+**Languages:** English, French, Tamil
+
+I'm currently deepening my SQL, AWS, and MLOps skills while building public portfolio projects. Open to Data Scientist and ML Engineer roles in Paris, Lyon, or remote France.

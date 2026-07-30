@@ -7,9 +7,9 @@ toc: false
 
 ## 
 
-I am Balasubramaniam Namasivayam, a Data Engineer passionate about building scalable data pipelines and distributed systems. 
+I am Balasubramaniam Namasivayam, a Data Scientist & ML Engineer with a PhD and 8+ years building production-grade data pipelines and applied machine learning models.
 
-This site serves as my personal portfolio and blog where I share my learnings and projects.
+This site serves as my personal portfolio and blog where I share my work, projects, and learnings across data science, ML, and engineering.
 
 <div class="clean-cards">
 
